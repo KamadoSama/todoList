@@ -1,19 +1,41 @@
 import * as React from 'react';
 import { Button, View } from 'react-native';
-import { createDrawerNavigator } from '@react-navigation/drawer';
+
 import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import Ionicons from '@expo/vector-icons/Ionicons'
 import Home from './screens/Home';
 import Notification from './screens/Notification';
 
-const Drawer = createDrawerNavigator();
+
+const Tab = createBottomTabNavigator();
 
 export default function App() {
   return (
     <NavigationContainer>
-      <Drawer.Navigator initialRouteName="Home">
-        <Drawer.Screen name="Home" component={Home} />
-        <Drawer.Screen name="Notifications" component={Notification} />
-      </Drawer.Navigator>
+      <Tab.Navigator
+        screenOptions={({ route }) => ({
+          tabBarIcon: ({ focused, color, size }) => {
+            let iconName;
+
+            if (route.name === 'Home') {
+              iconName = focused
+                ? 'ios-home'
+                : 'ios-home';
+            } else if (route.name === 'Settings') {
+              iconName = focused ? 'ios-list' : 'ios-list-outline';
+            }
+
+            // You can return any component that you like here!
+            return <Ionicons name={iconName} size={size} color={color} />;
+          },
+          tabBarActiveTintColor: 'tomato',
+          tabBarInactiveTintColor: 'gray',
+        })}
+      >
+        <Tab.Screen name="Home" component={Home} />
+        <Tab.Screen name="Settings" component={Notification} />
+      </Tab.Navigator>
     </NavigationContainer>
   );
 }
