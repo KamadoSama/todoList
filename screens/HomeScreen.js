@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { KeyboardAvoidingView, TouchableOpacity, StyleSheet, Text, View,TextInput, Keyboard } from 'react-native';
 import Task from '../components/Task';
 
-export default function Home() {
+export default function HomeScreen() {
   const [task, setTask] = useState();
   const [taskItems, setTaskItems] = useState([]);
 

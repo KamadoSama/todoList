@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { Button, View } from 'react-native';
+// import { Button, View } from 'react-native';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from '@expo/vector-icons/Ionicons'
-import Home from './screens/Home';
-import Notification from './screens/Notification';
+import HomeScreen from './screens/HomeScreen';
+import NotificationScreen from './screens/NotificationScreen';
 
 
 const Tab = createBottomTabNavigator();
@@ -33,8 +33,8 @@ export default function App() {
           tabBarInactiveTintColor: 'gray',
         })}
       >
-        <Tab.Screen name="Home" component={Home} />
-        <Tab.Screen name="Settings" component={Notification} />
+        <Tab.Screen name="Home" component={HomeScreen} />
+        <Tab.Screen name="Settings" component={NotificationScreen} />
       </Tab.Navigator>
     </NavigationContainer>
   );
