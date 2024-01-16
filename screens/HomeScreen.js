@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { KeyboardAvoidingView, TouchableOpacity, StyleSheet, Text, View,TextInput, Keyboard } from 'react-native';
 import Task from '../components/Task';
+import Accordion from '../components/Accordion';
 
 export default function HomeScreen() {
   const [task, setTask] = useState();
@@ -29,10 +30,7 @@ export default function HomeScreen() {
           {/* <Task text={'Task 1'} /> */}
           {taskItems.map((item,index) => {
             return (
-              <TouchableOpacity key={index} onPress={()=>completeTask(index)}>
-                <Task text={item}  />
-              </TouchableOpacity>
-            
+              <Accordion key={index} title={item} description={'This is a description'} footer={'This is a footer'} />
             )
             
           })}
