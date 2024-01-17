@@ -105,8 +105,7 @@ export default function App() {
           name="Settings"
           component={NotificationScreen}
         />
-      </Tab.Navigator>ù
-    <Button title="Go back home" >Go back home</Button>
+      </Tab.Navigator>
     </NavigationContainer>
   );
 }
