@@ -1,15 +1,10 @@
-import * as React from "react";
-// import { Button, View } from 'react-native';
-
+import React , {useState} from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import HomeScreen from "./screens/HomeScreen";
-import NotificationScreen from "./screens/NotificationScreen";
-import AddScreen from "./screens/AddScreen";
-import FindScreen from "./screens/FindScreen";
-import CalendarScreen from "./screens/CalendarScreen";
-import { View,TouchableOpacity,StyleSheet } from "react-native";
+import { HomeScreen, FindScreen,NotificationScreen,CalendarScreen,AddScreen } from "./screens"; 
+import { View,TouchableOpacity,StyleSheet, Button } from "react-native";
+
 
 const Tab = createBottomTabNavigator();
 const CustomTabBarButton = ({children,onPress}) => (
@@ -110,7 +105,8 @@ export default function App() {
           name="Settings"
           component={NotificationScreen}
         />
-      </Tab.Navigator>
+      </Tab.Navigator>ù
+    <Button title="Go back home" >Go back home</Button>
     </NavigationContainer>
   );
 }
