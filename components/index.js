@@ -1,6 +1,8 @@
 import { AddTaskModal } from "./AddTaskModal";
-import TextInputLabel from "./TextInputLabel";
+import {TextInputLabel } from "./TextInputLabel";
+import { PickerLabel } from "./PickerLabel";
 export{
     AddTaskModal,
-    TextInputLabel
+    TextInputLabel,
+    PickerLabel
 }

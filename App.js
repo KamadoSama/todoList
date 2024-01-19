@@ -6,6 +6,7 @@ import { HomeScreen, FindScreen,NotificationScreen,CalendarScreen,AddScreen } fr
 import {TextInput, View,TouchableOpacity,StyleSheet, Platform, Modal, Pressable, Text  } from "react-native";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {Picker} from '@react-native-picker/picker';
+import { PickerLabel, TextInputLabel } from "./components";
 
 const Tab = createBottomTabNavigator();
 const CustomTabBarButton = ({children,onPress}) => (
@@ -55,6 +56,11 @@ export default function App() {
     setModalVisible(!modalVisible);
   };
   
+  const pickerItems = [
+    { label: 'haute', value: 'haute',color:"#ff009d"},
+    { label: 'basse', value: 'basse',color:"#3af183" },
+    { label: 'moyenne', value: 'moyenne',color:"#267fff" },
+  ];
   return (
     <NavigationContainer>
        <Modal
@@ -81,22 +87,21 @@ export default function App() {
                 <Ionicons name="ios-close" size={24} color="#277dfa" onPress={toggleModal} />
               </View>
               <View style={{width:"100%",marginTop:10}}>
-                <TextInput style={styles.input} placeholder="Titre de la tâche" value={taskName} onChangeText={text=>setTaskName(text)} />
-                <TextInput style ={styles.input} placeholder="Description" value={taskName} onChangeText={text=>setTaskName(text)} />
-                <TextInput style ={styles.input} placeholder="Categorie" value={taskName} onChangeText={text=>setTaskName(text)} />
+                <TextInputLabel label={"Titre de la tâche"} value={taskName} onChangeText={text=>setTaskName(text)} />
+                <TextInputLabel label={"Description"} value={taskName} onChangeText={text=>setTaskName(text)} />
+                <TextInputLabel label={"Catégorie"} value={taskName} onChangeText={text=>setTaskName(text)} />
               </View>
               <View style={{flexDirection:'row', width:"100%",justifyContent:"space-between"}}>
-                <Pressable onPress={togglePicker}>
-                <TextInput
-                  
+                <Pressable onPress={togglePicker} style={{width:"48%"}}>
+                <TextInputLabel
                   style={styles.inputRow}
-                  placeholder="Sélectionnez une date"
+                  label={"Date"}
                   value={taskDate}
                   onChangeText={text => setTaskDate(text)}
                   editable={false}
                 />
                 </Pressable>
-                <Picker
+                {/* <Picker
                   style={{...styles.inputRow, width:"50%"}} 
                   selectedValue={selectedLanguage}
                   onValueChange={(itemValue, itemIndex) =>
@@ -109,7 +114,16 @@ export default function App() {
                   <Picker.Item label="haut" value="haut" />
                   <Picker.Item label="Basse" value="basse" />
                   <Picker.Item label="Moyenne" value="moyen" />
-                </Picker>
+                </Picker> */}
+
+                <PickerLabel 
+                label={"Priorité"} 
+                selectedValue={selectedLanguage} 
+                onValueChange={
+                  (itemValue) =>
+                    setSelectedLanguage(itemValue)}
+                items={pickerItems}
+                />
               </View>
               <View style={{flexDirection:'row', width:"100%",justifyContent:"space-between"}}>
                 <Pressable onPress={togglePicker}>
@@ -131,7 +145,7 @@ export default function App() {
                   }
                   placeholder="Priorité"
                   >
-                  <Picker.Item label="Priorité" enabled={false} value="priorité" />
+                  <Picker.Item label="Priorité" color="#267fff" enabled={false} value="priorité" />
                   <Picker.Item label="haut" value="haut" />
                   <Picker.Item label="Basse" value="basse" />
                   <Picker.Item label="Moyenne" value="moyen" />
@@ -254,7 +268,7 @@ const styles = StyleSheet.create({
   modalView: {
     // paddingTop:2,
     width:'80%',
-    height:400,
+    height:500,
     margin: 20,
     backgroundColor: 'white',
     borderRadius: 20,

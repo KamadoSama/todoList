@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TextInput, StyleSheet } from 'react-native';
 
-const TextInputLabel = ({ label, ...props }) => {
+export const TextInputLabel = ({ label, ...props }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.label}>{label}</Text>
@@ -13,6 +13,7 @@ const TextInputLabel = ({ label, ...props }) => {
 const styles = StyleSheet.create({
   container: {
     marginBottom: 16,
+    // width: '100%',
   },
   label: {
     fontSize: 16,
@@ -24,7 +25,8 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 8,
     fontSize: 16,
+    backgroundColor: "#f3f6fd",
   },
 });
 
-export default TextInputLabel;
+
