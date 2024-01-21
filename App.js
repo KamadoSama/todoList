@@ -1,159 +1,241 @@
-import React , {useState} from "react";
+import React, { useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { HomeScreen, FindScreen,NotificationScreen,CalendarScreen,AddScreen } from "./screens"; 
-import {TextInput, View,TouchableOpacity,StyleSheet, Platform, Modal, Pressable, Text  } from "react-native";
-import DateTimePicker from '@react-native-community/datetimepicker';
-import {Picker} from '@react-native-picker/picker';
+import {
+  HomeScreen,
+  FindScreen,
+  NotificationScreen,
+  CalendarScreen,
+  AddScreen,
+} from "./screens";
+import {
+  TextInput,
+  View,
+  TouchableOpacity,
+  StyleSheet,
+  Platform,
+  Modal,
+  Pressable,
+  Text,
+} from "react-native";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { Picker } from "@react-native-picker/picker";
 import { PickerLabel, TextInputLabel } from "./components";
+import { Button } from "react-native-paper";
 
 const Tab = createBottomTabNavigator();
-const CustomTabBarButton = ({children,onPress}) => (
+const CustomTabBarButton = ({ children, onPress }) => (
   <TouchableOpacity
-  style={{
-    top: -30,
-    justifyContent: 'center',
-    alignItems: 'center',
-    ...styles.shadow
-  }}
-  onPress={onPress}
+    style={{
+      top: -30,
+      justifyContent: "center",
+      alignItems: "center",
+      ...styles.shadow,
+    }}
+    onPress={onPress}
   >
-    
-    <View style={{width:60,height:60,borderRadius:20, backgroundColor:'#277dfa' }} >
+    <View
+      style={{
+        width: 60,
+        height: 60,
+        borderRadius: 20,
+        backgroundColor: "#277dfa",
+      }}
+    >
       {children}
     </View>
   </TouchableOpacity>
-  
-)
+);
 export default function App() {
-  const [taskName, setTaskName] = useState('');
+  const [taskName, setTaskName] = useState("");
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [taskDate, setTaskDate] = useState("");
   const [selectedLanguage, setSelectedLanguage] = useState();
-  const handleDateChange = ({type}, selectedDate) => {  
-    
-    const currentDate = selectedDate ;
-    // setSelectedDate(currentDate);
+  const [startDateTime, setStartDateTime] = useState("");
+  const [endDateTime, setEndDateTime] = useState("");
+  const [showStartPicker, setShowStartPicker] = useState(false);
+  const [showEndPicker, setShowEndPicker] = useState(false);
+
+  const showStartDateTimePicker = () => setShowStartPicker(true);
+  const showEndDateTimePicker = () => setShowEndPicker(true);
+
+  const handleStartDateTimeChange = (event, selectedDate) => {
+    console.log("handleStartDateTimeChange", selectedDate);
+    const currentDate = selectedDate;
+    setStartDateTime(formatTime(currentDate));
+    setShowStartPicker(!showStartPicker);
+  };
+
+  const handleEndDateTimeChange = (event, selectedDate) => {
+    const currentDate = selectedDate;
+    setEndDateTime(formatTime(currentDate));
+    setShowEndPicker(!showEndPicker);
+  };
+
+  const handleDateChange = ({ type }, selectedDate) => {
+    const currentDate = selectedDate;
     setTaskDate(currentDate.toDateString());
     togglePicker();
   };
 
   const togglePicker = () => {
     setShowDatePicker(!showDatePicker);
-  }
+  };
+
+  
 
   const handleAddTask = () => {
-      if (taskName.trim()) {
-        onAddTask(taskName);
-        setTaskName(''); 
-      }
-    };
+    if (taskName.trim()) {
+      onAddTask(taskName);
+      setTaskName("");
+    }
+  };
   const [modalVisible, setModalVisible] = useState(false);
   const toggleModal = () => {
-    console.log("toggleModal")
+    console.log("toggleModal");
     setModalVisible(!modalVisible);
   };
-  
+
   const pickerItems = [
-    { label: 'haute', value: 'haute',color:"#ff009d"},
-    { label: 'basse', value: 'basse',color:"#3af183" },
-    { label: 'moyenne', value: 'moyenne',color:"#267fff" },
+    { label: "haute", value: "haute", color: "#ff009d" },
+    { label: "basse", value: "basse", color: "#3af183" },
+    { label: "moyenne", value: "moyenne", color: "#267fff" },
   ];
+
+  const formatTime = (date) => {
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    return `${hours}:${minutes}`;
+  };
   return (
     <NavigationContainer>
-       <Modal
-          animationType="slide"
-          transparent={true}
-          visible={modalVisible}
-          onRequestClose={() => {
-            Alert.alert('Modal has been closed.');
-            setModalVisible(!modalVisible);
-          }}>
-            {showDatePicker && (
-            <DateTimePicker
-              value={selectedDate}
-              mode="date"
-              display="spinner"
-              locale="fr-FR"
-              onChange={handleDateChange}
-            />
-          )}
-          <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <View style={styles.topModal}>
-                <Text style={{fontSize:20,fontWeight:"bold"}}>Nouvelle tâche</Text>
-                <Ionicons name="ios-close" size={24} color="#277dfa" onPress={toggleModal} />
-              </View>
-              <View style={{width:"100%",marginTop:10}}>
-                <TextInputLabel label={"Titre de la tâche"} value={taskName} onChangeText={text=>setTaskName(text)} />
-                <TextInputLabel label={"Description"} value={taskName} onChangeText={text=>setTaskName(text)} />
-                <TextInputLabel label={"Catégorie"} value={taskName} onChangeText={text=>setTaskName(text)} />
-              </View>
-              <View style={{flexDirection:'row', width:"100%",justifyContent:"space-between"}}>
-                <Pressable onPress={togglePicker} style={{width:"48%"}}>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          Alert.alert("Modal has been closed.");
+          setModalVisible(!modalVisible);
+        }}
+      >
+        {showDatePicker && (
+          <DateTimePicker
+            value={selectedDate}
+            mode="date"
+            display="spinner"
+            locale="fr-FR"
+            onChange={handleDateChange}
+          />
+        )}
+
+        {showStartPicker && (
+          <DateTimePicker
+            value={selectedDate}
+            mode="time"
+            is24Hour={true}
+            display="default"
+            onChange={handleStartDateTimeChange}
+          />
+        )}
+
+        {showEndPicker && (
+          <DateTimePicker
+            value={selectedDate}
+            mode="time"
+            is24Hour={true}
+            display="default"
+            onChange={handleEndDateTimeChange}
+          />
+        )}
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <View style={styles.topModal}>
+              <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+                Nouvelle tâche
+              </Text>
+              <Ionicons
+                name="ios-close"
+                size={24}
+                color="#277dfa"
+                onPress={toggleModal}
+              />
+            </View>
+            <View style={{ width: "100%", marginTop: 10 }}>
+              <TextInputLabel
+                label={"Titre de la tâche"}
+                value={taskName}
+                onChangeText={(text) => setTaskName(text)}
+              />
+              <TextInputLabel
+                label={"Description"}
+                value={taskName}
+                onChangeText={(text) => setTaskName(text)}
+              />
+              <TextInputLabel
+                label={"Catégorie"}
+                value={taskName}
+                onChangeText={(text) => setTaskName(text)}
+              />
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                width: "100%",
+                justifyContent: "space-between",
+              }}
+            >
+              <Pressable onPress={togglePicker} style={{ width: "48%" }}>
                 <TextInputLabel
-                  style={styles.inputRow}
+                  style={{...styles.inputRow,fontSize: 16, fontWeight: "bold"}}
                   label={"Date"}
                   value={taskDate}
-                  onChangeText={text => setTaskDate(text)}
+                  onChangeText={(text) => setTaskDate(text)}
                   editable={false}
                 />
-                </Pressable>
-                {/* <Picker
-                  style={{...styles.inputRow, width:"50%"}} 
-                  selectedValue={selectedLanguage}
-                  onValueChange={(itemValue, itemIndex) =>
-                    setSelectedLanguage(itemValue)
-                  
-                  }
-                  placeholder="Priorité"
-                  >
-                  <Picker.Item label="Priorité" enabled={false} value="priorité" />
-                  <Picker.Item label="haut" value="haut" />
-                  <Picker.Item label="Basse" value="basse" />
-                  <Picker.Item label="Moyenne" value="moyen" />
-                </Picker> */}
+              </Pressable>
 
-                <PickerLabel 
-                label={"Priorité"} 
-                selectedValue={selectedLanguage} 
-                onValueChange={
-                  (itemValue) =>
-                    setSelectedLanguage(itemValue)}
+              <PickerLabel
+                label={"Priorité"}
+                selectedValue={selectedLanguage}
+                onValueChange={(itemValue) => setSelectedLanguage(itemValue)}
                 items={pickerItems}
-                />
-              </View>
-              <View style={{flexDirection:'row', width:"100%",justifyContent:"space-between"}}>
-                <Pressable onPress={togglePicker}>
-                <TextInput
-                  
-                  style={styles.inputRow}
-                  placeholder="Sélectionnez une date"
-                  value={taskDate}
-                  onChangeText={text => setTaskDate(text)}
+              />
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                width: "100%",
+                justifyContent: "space-between",
+              }}
+            >
+              <Pressable onPress={showStartDateTimePicker} style={{ width: "48%" }}>
+                <TextInputLabel
+                  style={{...styles.inputRow,fontSize: 20, fontWeight: "bold",paddingHorizontal: 20}}
+                  label={"Heure de début"}
+                  value={startDateTime}
+                  onChangeText={(text) => setTaskDate(text)}
                   editable={false}
                 />
-                </Pressable>
-                <Picker
-                  style={{...styles.inputRow, width:"50%"}} 
-                  selectedValue={selectedLanguage}
-                  onValueChange={(itemValue, itemIndex) =>
-                    setSelectedLanguage(itemValue)
-                  
-                  }
-                  placeholder="Priorité"
-                  >
-                  <Picker.Item label="Priorité" color="#267fff" enabled={false} value="priorité" />
-                  <Picker.Item label="haut" value="haut" />
-                  <Picker.Item label="Basse" value="basse" />
-                  <Picker.Item label="Moyenne" value="moyen" />
-                </Picker>
-              </View>
+              </Pressable>
+              <Pressable onPress={showEndDateTimePicker} style={{ width: "48%" }}>
+                <TextInputLabel
+                  style={{...styles.inputRow,fontSize: 20, fontWeight: "bold",paddingHorizontal: 20}}
+                  label={"Heure de fin"}
+                  value={endDateTime}
+                  onChangeText={(text) => setTaskDate(text)}
+                  editable={false}
+                />
+              </Pressable>
+            </View>
+            <View style={{ width: "100%" }}>
+              <Button mode="contained"style={{borderRadius:5,backgroundColor:"#277dfa",marginBottom:4}} >Ajouter</Button>
+              <Button mode="contained"style={{borderRadius:5,backgroundColor:"#d6deeb"}} textColor="#000" >Annuler</Button>
             </View>
           </View>
-        </Modal>
+        </View>
+      </Modal>
       <Tab.Navigator
         screenOptions={({ route }) => ({
           tabBarShowLabel: false,
@@ -190,8 +272,8 @@ export default function App() {
           component={FindScreen}
         />
         <Tab.Screen
-         name="Add"
-         component={AddScreen}
+          name="Add"
+          component={AddScreen}
           options={{
             tabBarIcon: ({ focused }) => (
               <Ionicons
@@ -201,10 +283,9 @@ export default function App() {
               />
             ),
             tabBarButton: (props) => (
-              <CustomTabBarButton {...props} onPress={toggleModal}  />
-            )
+              <CustomTabBarButton {...props} onPress={toggleModal} />
+            ),
           }}
-         
         />
         <Tab.Screen
           options={{
@@ -237,10 +318,9 @@ export default function App() {
   );
 }
 
-
 const styles = StyleSheet.create({
   shadow: {
-    shadowColor: "#277dfa" ,
+    shadowColor: "#277dfa",
     shadowOffset: {
       width: 0,
       height: 10,
@@ -251,30 +331,29 @@ const styles = StyleSheet.create({
   },
   centeredView: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginTop: 22,
   },
   topModal: {
     // flex: 1,
-    justifyContent: 'space-between',
-    alignItems: 'center',
-   flexDirection:'row',
-  //  height:,
-    width:'100%',
-    marginBottom:20,
-  }
-  ,
+    justifyContent: "space-between",
+    alignItems: "center",
+    flexDirection: "row",
+    //  height:,
+    width: "100%",
+    marginBottom: 20,
+  },
   modalView: {
     // paddingTop:2,
-    width:'80%',
-    height:500,
+    width: "80%",
+    height: 560,
     margin: 20,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 20,
     padding: 20,
-    alignItems: 'center',
-    shadowColor: '#000',
+    alignItems: "center",
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -289,19 +368,19 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   buttonOpen: {
-    backgroundColor: '#F194FF',
+    backgroundColor: "#F194FF",
   },
   buttonClose: {
-    backgroundColor: '#2196F3',
+    backgroundColor: "#2196F3",
   },
   textStyle: {
-    color: 'white',
-    fontWeight: 'bold',
-    textAlign: 'center',
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
   },
   modalText: {
     marginBottom: 15,
-    textAlign: 'center',
+    textAlign: "center",
   },
   input: {
     backgroundColor: "#f3f6fd",
@@ -315,8 +394,9 @@ const styles = StyleSheet.create({
   inputRow: {
     backgroundColor: "#f3f6fd",
     borderRadius: 5,
-  
+    // paddingHorizontal: 20,
     height: 50,
+    
     paddingVertical: 5,
     marginBottom: 10,
     borderColor: "#d6deeb",

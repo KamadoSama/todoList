@@ -12,12 +12,12 @@ export const TextInputLabel = ({ label, ...props }) => {
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 16,
+    marginBottom: 5,
     // width: '100%',
   },
   label: {
-    fontSize: 16,
-    marginBottom: 8,
+    fontSize: 13,
+    marginBottom: 5,
   },
   input: {
     borderWidth: 1,

@@ -21,13 +21,13 @@ export const PickerLabel = ({ label, items, selectedValue, onValueChange }) => {
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 16,
+    marginBottom: 5,
  
     width: '48%',
   },
   label: {
-    fontSize: 16,
-    marginBottom: 8,
+    fontSize: 13,
+    marginBottom: 5,
   },
   picker: {
     borderWidth: 1,
