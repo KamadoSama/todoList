@@ -13,6 +13,8 @@ import Task from "../components/Task";
 import Accordion from "../components/Accordion";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Button} from 'react-native-paper';
+
+import { retrieveTasks } from "../db/db";
 export default function HomeScreen() {
   const [task, setTask] = useState();
   const [taskItems, setTaskItems] = useState([]);
@@ -21,7 +23,7 @@ export default function HomeScreen() {
   const [filteredTasks, setFilteredTasks] = useState([]);
 
   useEffect(() => {
-    // Appliquer le filtrage lorsque le contenu de taskItems, search ou finished change
+    retrieveTasks();
     filterTasks();
   }, [taskItems, search]);
 

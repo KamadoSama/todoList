@@ -2,54 +2,25 @@ import React, { useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import {
-  HomeScreen,
-  FindScreen,
-  NotificationScreen,
-  CalendarScreen,
-  AddScreen,
-} from "./screens";
-import {
-  TextInput,
-  View,
-  TouchableOpacity,
-  StyleSheet,
-  Platform,
-  Modal,
-  Pressable,
-  Text,
-} from "react-native";
+import {HomeScreen,FindScreen,NotificationScreen,CalendarScreen,AddScreen,} from "./screens";
+import {View,TouchableOpacity,StyleSheet,Modal,Pressable,Text,} from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { Picker } from "@react-native-picker/picker";
 import { PickerLabel, TextInputLabel } from "./components";
 import { Button } from "react-native-paper";
 import { useForm, Controller } from "react-hook-form";
-
+import { insertTask, retrieveTasks } from "./db/db";
 const Tab = createBottomTabNavigator();
 const CustomTabBarButton = ({ children, onPress }) => (
-  <TouchableOpacity
-    style={{
-      top: -30,
-      justifyContent: "center",
-      alignItems: "center",
-      ...styles.shadow,
-    }}
-    onPress={onPress}
-  >
-    <View
-      style={{
-        width: 60,
-        height: 60,
-        borderRadius: 20,
-        backgroundColor: "#277dfa",
-      }}
-    >
+  <TouchableOpacity style={{top: -30,justifyContent: "center",alignItems: "center",...styles.shadow,}}onPress={onPress}>
+    <View style={{width: 60,height: 60,borderRadius: 20,backgroundColor: "#277dfa",}}>
       {children}
     </View>
   </TouchableOpacity>
 );
+
+
 export default function App() {
-  const [taskName, setTaskName] = useState("");
+  
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [taskDate, setTaskDate] = useState("");
@@ -59,13 +30,7 @@ export default function App() {
   const [showStartPicker, setShowStartPicker] = useState(false);
   const [showEndPicker, setShowEndPicker] = useState(false);
 
-  const {
-    control,
-    handleSubmit,
-    setValue,
-    register,
-    formState: { errors },
-  } = useForm();
+  const {control,handleSubmit,setValue,register,formState: { errors },} = useForm();
 
   const showStartDateTimePicker = () => setShowStartPicker(true);
   const showEndDateTimePicker = () => setShowEndPicker(true);
@@ -109,7 +74,7 @@ export default function App() {
     setStartDateTime("");
     setEndDateTime("");
   }
-  
+
   const toggleModal = () => {
     console.log("toggleModal");
     !modalVisible ?  reset() : null;
@@ -127,8 +92,11 @@ export default function App() {
     const minutes = date.getMinutes().toString().padStart(2, "0");
     return `${hours}:${minutes}`;
   };
+ 
   
-  const onSubmit = (data) => {console.log(data)};
+  const onSubmit = (data) => {
+    insertTask({...data});
+    console.log(data)};
 
   return (
     <NavigationContainer>
