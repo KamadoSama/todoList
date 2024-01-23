@@ -23,6 +23,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { Picker } from "@react-native-picker/picker";
 import { PickerLabel, TextInputLabel } from "./components";
 import { Button } from "react-native-paper";
+import { useForm, Controller } from "react-hook-form";
 
 const Tab = createBottomTabNavigator();
 const CustomTabBarButton = ({ children, onPress }) => (
@@ -52,31 +53,41 @@ export default function App() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [taskDate, setTaskDate] = useState("");
-  const [selectedLanguage, setSelectedLanguage] = useState();
+  const [selectedPriority, setSelectedPriority] = useState();
   const [startDateTime, setStartDateTime] = useState("");
   const [endDateTime, setEndDateTime] = useState("");
   const [showStartPicker, setShowStartPicker] = useState(false);
   const [showEndPicker, setShowEndPicker] = useState(false);
 
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    register,
+    formState: { errors },
+  } = useForm();
+
   const showStartDateTimePicker = () => setShowStartPicker(true);
   const showEndDateTimePicker = () => setShowEndPicker(true);
 
   const handleStartDateTimeChange = (event, selectedDate) => {
-    console.log("handleStartDateTimeChange", selectedDate);
     const currentDate = selectedDate;
     setStartDateTime(formatTime(currentDate));
+    setValue("heureDebut", formatTime(currentDate));
     setShowStartPicker(!showStartPicker);
   };
 
   const handleEndDateTimeChange = (event, selectedDate) => {
     const currentDate = selectedDate;
     setEndDateTime(formatTime(currentDate));
+    setValue("heureFin", formatTime(currentDate));
     setShowEndPicker(!showEndPicker);
   };
 
   const handleDateChange = ({ type }, selectedDate) => {
     const currentDate = selectedDate;
     setTaskDate(currentDate.toDateString());
+    setValue("date", currentDate.toDateString());
     togglePicker();
   };
 
@@ -84,17 +95,24 @@ export default function App() {
     setShowDatePicker(!showDatePicker);
   };
 
-  
-
-  const handleAddTask = () => {
-    if (taskName.trim()) {
-      onAddTask(taskName);
-      setTaskName("");
-    }
-  };
   const [modalVisible, setModalVisible] = useState(false);
+  const reset = () => {
+    setValue("titre", "");
+    setValue("description", "");
+    setValue("categorie", "");
+    setValue("date", "");
+    setValue("priorite", "");
+    setValue("heureDebut", "");
+    setValue("heureFin", "");
+    setTaskDate("");
+    setSelectedPriority("");
+    setStartDateTime("");
+    setEndDateTime("");
+  }
+  
   const toggleModal = () => {
     console.log("toggleModal");
+    !modalVisible ?  reset() : null;
     setModalVisible(!modalVisible);
   };
 
@@ -105,10 +123,13 @@ export default function App() {
   ];
 
   const formatTime = (date) => {
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
+    const hours = date.getHours().toString().padStart(2, "0");
+    const minutes = date.getMinutes().toString().padStart(2, "0");
     return `${hours}:${minutes}`;
   };
+  
+  const onSubmit = (data) => {console.log(data)};
+
   return (
     <NavigationContainer>
       <Modal
@@ -163,22 +184,44 @@ export default function App() {
               />
             </View>
             <View style={{ width: "100%", marginTop: 10 }}>
-              <TextInputLabel
-                label={"Titre de la tâche"}
-                value={taskName}
-                onChangeText={(text) => setTaskName(text)}
+              <Controller
+                control={control}
+                render={({ field }) => (
+                  <TextInputLabel
+                    label={"Titre de la tâche"}
+                    value={field.value}
+                    onChangeText={(text) => setValue("titre", text)}
+                  />
+                )}
+                name="titre"
+                defaultValue=""
               />
-              <TextInputLabel
-                label={"Description"}
-                value={taskName}
-                onChangeText={(text) => setTaskName(text)}
+              <Controller
+                control={control}
+                render={({ field }) => (
+                  <TextInputLabel
+                    label={"Description"}
+                    value={field.value}
+                    onChangeText={(text) => setValue("description", text)}
+                  />
+                )}
+                name="description"
+                defaultValue=""
               />
-              <TextInputLabel
-                label={"Catégorie"}
-                value={taskName}
-                onChangeText={(text) => setTaskName(text)}
+              <Controller
+                control={control}
+                render={({ field }) => (
+                  <TextInputLabel
+                    label={"Catégorie"}
+                    value={field.value}
+                    onChangeText={(text) => setValue("categorie", text)}
+                  />
+                )}
+                name="categorie"
+                defaultValue=""
               />
             </View>
+
             <View
               style={{
                 flexDirection: "row",
@@ -187,22 +230,43 @@ export default function App() {
               }}
             >
               <Pressable onPress={togglePicker} style={{ width: "48%" }}>
-                <TextInputLabel
-                  style={{...styles.inputRow,fontSize: 16, fontWeight: "bold"}}
-                  label={"Date"}
-                  value={taskDate}
-                  onChangeText={(text) => setTaskDate(text)}
-                  editable={false}
+                <Controller
+                  control={control}
+                  render={({ field }) => (
+                    <TextInputLabel
+                      style={{
+                        ...styles.inputRow,
+                        fontSize: 16,
+                        fontWeight: "bold",
+                      }}
+                      label={"Date"}
+                      value={taskDate}
+                      onChangeText={(text) => setValue("date", text)}
+                      editable={false}
+                    />
+                  )}
+                  name="date"
+                  defaultValue=""
                 />
               </Pressable>
 
-              <PickerLabel
-                label={"Priorité"}
-                selectedValue={selectedLanguage}
-                onValueChange={(itemValue) => setSelectedLanguage(itemValue)}
-                items={pickerItems}
+              <Controller
+                control={control}
+                render={({ field }) => (
+                  <PickerLabel
+                    label={"Priorité"}
+                    selectedValue={field.value}
+                    onValueChange={(itemValue) =>
+                      setValue("priorite", itemValue)
+                    }
+                    items={pickerItems}
+                  />
+                )}
+                name="priorite"
+                defaultValue=""
               />
             </View>
+
             <View
               style={{
                 flexDirection: "row",
@@ -210,18 +274,34 @@ export default function App() {
                 justifyContent: "space-between",
               }}
             >
-              <Pressable onPress={showStartDateTimePicker} style={{ width: "48%" }}>
+              <Pressable
+                onPress={showStartDateTimePicker}
+                style={{ width: "48%" }}
+              >
                 <TextInputLabel
-                  style={{...styles.inputRow,fontSize: 20, fontWeight: "bold",paddingHorizontal: 20}}
+                  style={{
+                    ...styles.inputRow,
+                    fontSize: 20,
+                    fontWeight: "bold",
+                    paddingHorizontal: 20,
+                  }}
                   label={"Heure de début"}
                   value={startDateTime}
                   onChangeText={(text) => setTaskDate(text)}
                   editable={false}
                 />
               </Pressable>
-              <Pressable onPress={showEndDateTimePicker} style={{ width: "48%" }}>
+              <Pressable
+                onPress={showEndDateTimePicker}
+                style={{ width: "48%" }}
+              >
                 <TextInputLabel
-                  style={{...styles.inputRow,fontSize: 20, fontWeight: "bold",paddingHorizontal: 20}}
+                  style={{
+                    ...styles.inputRow,
+                    fontSize: 20,
+                    fontWeight: "bold",
+                    paddingHorizontal: 20,
+                  }}
                   label={"Heure de fin"}
                   value={endDateTime}
                   onChangeText={(text) => setTaskDate(text)}
@@ -230,8 +310,24 @@ export default function App() {
               </Pressable>
             </View>
             <View style={{ width: "100%" }}>
-              <Button mode="contained"style={{borderRadius:5,backgroundColor:"#277dfa",marginBottom:4}} >Ajouter</Button>
-              <Button mode="contained"style={{borderRadius:5,backgroundColor:"#d6deeb"}} textColor="#000" >Annuler</Button>
+              <Button
+                mode="contained"
+                style={{
+                  borderRadius: 5,
+                  backgroundColor: "#277dfa",
+                  marginBottom: 4,
+                }}
+                onPress={handleSubmit(onSubmit)}
+              >
+                Ajouter
+              </Button>
+              <Button
+                mode="contained"
+                style={{ borderRadius: 5, backgroundColor: "#d6deeb" }}
+                textColor="#000"
+              >
+                Annuler
+              </Button>
             </View>
           </View>
         </View>
@@ -303,11 +399,7 @@ export default function App() {
         <Tab.Screen
           options={{
             tabBarIcon: ({ focused }) => (
-              <Ionicons
-                name="ios-bar-chart"
-                size={24}
-                color={focused ? "#277dfa" : "#b2bccd"}
-              />
+              <Ionicons name="ios-bar-chart" size={24} color={focused ? "#277dfa" : "#b2bccd"}/>
             ),
           }}
           name="Settings"
@@ -394,9 +486,7 @@ const styles = StyleSheet.create({
   inputRow: {
     backgroundColor: "#f3f6fd",
     borderRadius: 5,
-    // paddingHorizontal: 20,
     height: 50,
-    
     paddingVertical: 5,
     marginBottom: 10,
     borderColor: "#d6deeb",
