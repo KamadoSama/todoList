@@ -14,22 +14,42 @@ import Accordion from "../components/Accordion";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Button} from 'react-native-paper';
 
-import { retrieveTasks } from "../db/db";
+import { retrieveTasks } from "../db/crudTodo";
+import { db } from "../db/db";
 export default function HomeScreen() {
-  const [task, setTask] = useState();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        
+        const task = await retrieveTasks(db);
+        console.log(task);
+        setTaskItems(task);
+        setFilteredTasks(task);
+      } catch (error) {
+        console.error('Erreur lors de la récupération des tâches :', error);
+      }
+    };
+
+    fetchData();
+
+  }, []);
+
+  useEffect(() => {
+    filterTasks();
+  }, [taskItems, search]);
+
+  const [tasks, setTasks] = useState();
   const [taskItems, setTaskItems] = useState([]);
   const [search, setSearch] = useState("");
   const [finished, setFinished] = useState(false);
   const [filteredTasks, setFilteredTasks] = useState([]);
 
-  useEffect(() => {
-    retrieveTasks();
-    filterTasks();
-  }, [taskItems, search]);
+ 
 
   const filterTasks = () => {
     let filtered = taskItems.filter((item) => {
-      const searchMatch = item.toLowerCase().includes(search.toLowerCase());
+      const searchMatch = item.titre.toLowerCase().includes(search.toLowerCase());
       return searchMatch ;
     });
 
@@ -41,17 +61,17 @@ export default function HomeScreen() {
     console.log(status);
   };
 
-  const handleAddTask = () => {
-    Keyboard.dismiss();
-    setTaskItems([...taskItems, task]);
-    setFilteredTasks([...taskItems, task]);
-    setTask(null);
-  };
-  const completeTask = (index) => {
-    let itemsCopy = [...taskItems];
-    itemsCopy.splice(index, 1);
-    setTaskItems(itemsCopy);
-  };
+  // const handleAddTask = () => {
+  //   Keyboard.dismiss();
+  //   setTaskItems([...taskItems, task]);
+  //   setFilteredTasks([...taskItems, task]);
+  //   setTasks(null);
+  // };
+  // const completeTask = (index) => {
+  //   let itemsCopy = [...taskItems];
+  //   itemsCopy.splice(index, 1);
+  //   setTaskItems(itemsCopy);
+  // };
 
   return (
     <View style={styles.container}>
@@ -96,9 +116,14 @@ export default function HomeScreen() {
             return (
               <Accordion
                 key={index}
-                title={item}
-                description={"This is a description"}
+                title={item.titre}
+                categorie={item.categorie}
+                description={item.description}
                 footer={"This is a footer"}
+                heureDebut={item.heureDebut}
+                heureFin={item.heureFin}
+                date={item.date}
+                
               />
             );
           })}

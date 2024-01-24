@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { List } from "react-native-paper";
 import Ionicons from "@expo/vector-icons/Ionicons";
-const Accordion = ({ title, description, footer }) => {
+const Accordion = ({ title, categorie ,description, footer, heureFin ,heureDebut, date  }) => {
   const [expanded, setExpanded] = useState(false);
   const handlePress = () => setExpanded(!expanded);
 
@@ -10,7 +10,7 @@ const Accordion = ({ title, description, footer }) => {
     <View style={styles.accordContainer}>
       <List.Accordion
         title={title}
-        description="Home"
+        description={categorie}
         left={(props) => <List.Icon {...props} icon="circle-outline" />}
         right={(props) => (
           <List.Icon
@@ -27,14 +27,27 @@ const Accordion = ({ title, description, footer }) => {
           backgroundColor: "#fff",
         }}
       >
-        <List.Item
-          title="First item"
+        {/* <List.Item
+          title={description}
           style={{ backgroundColor: "#fff" }}
-          description="jfjd  jsj js g sdjgsdgsdj"
-        />
+          // description={description}
+        /> */}
+        <Text style={{ fontWeight:'bold',marginTop:20, marginBottom:20}} >{description}</Text>
       </List.Accordion>
       <View style={styles.footer}>
-        <View style={{width:'80%'}}><Text style={{alignItems:'center',display:'flex'}}>{footer}</Text></View>
+        <View style={{width:'70%',flexDirection:'row',justifyContent:'space-between'}}>
+          <View style={{backgroundColor:"#d6deed", borderRadius:10,  padding:2,alignItems:'center',flexDirection:'row' }}>
+          <Text >
+            {heureDebut} - {heureFin} 
+          </Text>
+          </View>
+          <View style={{backgroundColor:"#d6deed", borderRadius:10,  padding:2,alignItems:'center',flexDirection:'row' }}>
+          <Text >
+            {date}
+          </Text>
+          </View>
+          
+        </View>
         <View style={{flexDirection:'row',}}>
             <Ionicons name="ios-pencil-outline" size={24} color="#277dfa" />
             <Ionicons name="ios-trash-outline" size={24} color="#277dfa" />

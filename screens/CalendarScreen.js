@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react'
 import { Button, View } from 'react-native';
-import { retrieveTasks } from "../db/db";
+import { retrieveTasks } from "../db/crudTodo";
+import { db } from "../db/db";
 const CalendarScreen = () => {
     useEffect(() => {
-      retrieveTasks();},
+      retrieveTasks(db);},
        []);
     return (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
