@@ -13,18 +13,21 @@ import Task from "../components/Task";
 import Accordion from "../components/Accordion";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Button} from 'react-native-paper';
-
 import { retrieveTasks } from "../db/crudTodo";
 import { db } from "../db/db";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchTasks } from "../redux/redux";
+import { fetchTasks , setSearchInput } from "../redux/redux";
+
 export default function HomeScreen() {
+  const [tasks, setTasks] = useState();
+  const [taskItems, setTaskItems] = useState([]);
+  const [search, setSearch] = useState("");
+  const [finished, setFinished] = useState(false);
+  // const [filteredTasks, setFilteredTasks] = useState([]);
   const dispatch = useDispatch();
   const todos = useSelector((state) => state.todos.tasks);
-  useEffect(() => {
-    dispatch(fetchTasks());
-  }, [dispatch]);
-  console.log(todos);
+  const filter = useSelector((state) => state.todos.tasks);
+  const searchInput = useSelector((state) => state.todos.searchInput);
   // useEffect(() => {
   //   const fetchData = async () => {
   //     try {
@@ -43,25 +46,22 @@ export default function HomeScreen() {
   // }, []);
 
   useEffect(() => {
-    filterTasks();
+  
   }, [taskItems, search]);
 
-  const [tasks, setTasks] = useState();
-  const [taskItems, setTaskItems] = useState([]);
-  const [search, setSearch] = useState("");
-  const [finished, setFinished] = useState(false);
-  const [filteredTasks, setFilteredTasks] = useState([]);
-
- 
-
-  const filterTasks = () => {
-    let filtered = taskItems.filter((item) => {
-      const searchMatch = item.titre.toLowerCase().includes(search.toLowerCase());
-      return searchMatch ;
-    });
-
-    setFilteredTasks(filtered);
+  useEffect(() => {
+    dispatch(fetchTasks());
+  }, [dispatch]);
+  
+  const handleSearchChange = (text) => {
+    dispatch(setSearchInput(text));
   };
+
+  const filteredTasks = () => {
+    let filtered = todos;
+    filtered = filtered.filter(todo => todo.titre.toLowerCase().includes(searchInput.toLowerCase()));
+    return filtered;
+  }
 
   const handleFinish = (status) => {
     setFinished(status);
@@ -85,7 +85,7 @@ export default function HomeScreen() {
       <View style={styles.topContainer}>
        <View style={{flexDirection:'row'}}>
           <View style={styles.searchContainer}>
-            <TextInput style={styles.inputSearch} placeholder={'Rechercher...'} value={search} onChangeText={text=>setSearch(text)} />
+            <TextInput style={styles.inputSearch} placeholder={'Rechercher...'} value={searchInput} onChangeText={handleSearchChange}/>
             <Ionicons name="ios-search" size={24} color="#277dfa" style={{position:'absolute', right:5}}    />
           </View>
           <Button title="Search"  style={styles.searchButton} >
@@ -119,7 +119,7 @@ export default function HomeScreen() {
         <ScrollView  style={styles.items}>
           {/* This is where the tasks will go */}
           {/* <Task text={'Task 1'} /> */}
-          {todos.map((item, index) => {
+          {filteredTasks().map((item, index) => {
             return (
               <Accordion
                 key={index}

@@ -31,7 +31,7 @@ export const addTask = createAsyncThunk("todos/addTask", async (task) => {
 // Todo slice
 const todoSlice = createSlice({
   name: "todos",
-  initialState: { tasks: [], filter: "all" }, // Initial state should be a plain object
+  initialState: { tasks: [], filter: "all", searchInput:'' }, // Initial state should be a plain object
   reducers: {
     addTodo: (state, action) => {
       //{type: "todos/addTodo", payload: {id: 1, titre: "My todo",date: "2021-05-05",description: "My description",heureDebut: "12:00",heureFin: "13:00",categorie: "Travail",priorite: "Haute",done:0}}
@@ -42,7 +42,10 @@ const todoSlice = createSlice({
       const todo = state.tasks.find((todo) => todo.id === action.payload);
     },
     setFilter: (state, action) => {
-      state.tasks.filter = action.payload;
+      state.filter = action.payload;
+    },
+    setSearchInput: (state, action) => {
+      state.searchInput = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -56,11 +59,10 @@ const todoSlice = createSlice({
   },
 });
 
-export const { addTodo, toggleTodo, setFilter } = todoSlice.actions;
+export const { addTodo, toggleTodo, setFilter,setSearchInput } = todoSlice.actions;
 
 export const store = configureStore({
   reducer: {
     todos: todoSlice.reducer,
   },
-
 });
