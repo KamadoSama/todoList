@@ -16,24 +16,27 @@ import { Button} from 'react-native-paper';
 
 import { retrieveTasks } from "../db/crudTodo";
 import { db } from "../db/db";
+import { useSelector } from "react-redux";
+
 export default function HomeScreen() {
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
+  const todos = useSelector((state) => state.todos.tasks);
+  console.log(todos);
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
         
-        const task = await retrieveTasks(db);
-        console.log(task);
-        setTaskItems(task);
-        setFilteredTasks(task);
-      } catch (error) {
-        console.error('Erreur lors de la récupération des tâches :', error);
-      }
-    };
+  //       const task = await retrieveTasks(db);
+  //       console.log(task);
+  //       setTaskItems(task);
+  //       setFilteredTasks(task);
+  //     } catch (error) {
+  //       console.error('Erreur lors de la récupération des tâches :', error);
+  //     }
+  //   };
 
-    fetchData();
+  //   fetchData();
 
-  }, []);
+  // }, []);
 
   useEffect(() => {
     filterTasks();
@@ -112,7 +115,7 @@ export default function HomeScreen() {
         <ScrollView  style={styles.items}>
           {/* This is where the tasks will go */}
           {/* <Task text={'Task 1'} /> */}
-          {filteredTasks.map((item, index) => {
+          {todos.map((item, index) => {
             return (
               <Accordion
                 key={index}
