@@ -23,11 +23,12 @@ const todoSlice = createSlice({
   initialState: { tasks: [], filter: "all" }, // Initial state should be a plain object
   reducers: {
     addTodo: (state, action) => {
+      //{type: "todos/addTodo", payload: {id: 1, titre: "My todo",date: "2021-05-05",description: "My description",heureDebut: "12:00",heureFin: "13:00",categorie: "Travail",priorite: "Haute",done:0}}
+
       state.tasks.push(action.payload);
     },
     toggleTodo: (state, action) => {
       const todo = state.tasks.find((todo) => todo.id === action.payload);
-      
     },
     setFilter: (state, action) => {
       state.tasks.filter = action.payload;
@@ -48,8 +49,7 @@ export const store = configureStore({
   reducer: {
     todos: todoSlice.reducer,
   },
-  preloadedState: {}, // optional initial state (if needed)
   middleware: (getDefaultMiddleware) => {
-    return getDefaultMiddleware().concat(fetchTasks); // include async thunk middleware
+    return getDefaultMiddleware().concat(fetchTasks); 
   },
 });

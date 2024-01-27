@@ -11,7 +11,8 @@ import { useForm, Controller } from "react-hook-form";
 import { insertTask } from "../db/crudTodo";
 import { db,init } from "../db/db";
 import { format } from 'date-fns';
-
+import { useDispatch } from "react-redux";
+import { addTodo } from "../redux/redux";
 const Tab = createBottomTabNavigator();
 const CustomTabBarButton = ({ children, onPress }) => (
   <TouchableOpacity style={{top: -30,justifyContent: "center",alignItems: "center",...styles.shadow,}}onPress={onPress}>
@@ -22,6 +23,7 @@ const CustomTabBarButton = ({ children, onPress }) => (
 );
 
 const TabRoute = () => {
+    const dispatch = useDispatch();
     useEffect(() => {
         init(db);   
       }, []);
@@ -100,13 +102,20 @@ const TabRoute = () => {
       };
      
       
-      const onSubmit = (data) => {
-        insertTask(db,{...data});
-        reset()
-        toggleModal();
-        navigation.navigate('Tâches'); 
-        console.log(data)
+      const onSubmit = async (data) => {
+        try {
+          dispatch(addTodo({ ...data }));
+          await insertTask(db, { ...data });
+          reset();
+          toggleModal();
+          navigation.navigate('Tâches');
+          console.log(data);
+        } catch (error) {
+          console.error("Erreur lors de la soumission du formulaire :", error);
+          // Gérer l'erreur de manière appropriée
+        }
       };
+      
   return (
     <>
        <Modal
