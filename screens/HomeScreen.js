@@ -16,10 +16,14 @@ import { Button} from 'react-native-paper';
 
 import { retrieveTasks } from "../db/crudTodo";
 import { db } from "../db/db";
-import { useSelector } from "react-redux";
-
+import { useSelector, useDispatch } from "react-redux";
+import { fetchTasks } from "../redux/redux";
 export default function HomeScreen() {
+  const dispatch = useDispatch();
   const todos = useSelector((state) => state.todos.tasks);
+  useEffect(() => {
+    dispatch(fetchTasks());
+  }, [dispatch]);
   console.log(todos);
   // useEffect(() => {
   //   const fetchData = async () => {

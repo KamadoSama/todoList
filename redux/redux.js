@@ -3,7 +3,8 @@ import {
   createSlice,
   createAsyncThunk,
 } from "@reduxjs/toolkit";
-import { retrieveTasks } from "../db/crudTodo";
+
+import { retrieveTasks, insertTask } from "../db/crudTodo";
 import { db } from "../db/db";
 
 // Async thunk for fetching data
@@ -17,6 +18,16 @@ export const fetchTasks = createAsyncThunk("todos/fetchTasks", async () => {
   }
 });
 
+export const addTask = createAsyncThunk("todos/addTask", async (task) => {
+  try {
+    const result = await insertTask(db, task);
+    return result;
+  } catch (error) {
+    console.error("Erreur lors de l'insertion de la tâche :", error);
+    throw error;
+  }
+});
+
 // Todo slice
 const todoSlice = createSlice({
   name: "todos",
@@ -24,7 +35,7 @@ const todoSlice = createSlice({
   reducers: {
     addTodo: (state, action) => {
       //{type: "todos/addTodo", payload: {id: 1, titre: "My todo",date: "2021-05-05",description: "My description",heureDebut: "12:00",heureFin: "13:00",categorie: "Travail",priorite: "Haute",done:0}}
-
+      
       state.tasks.push(action.payload);
     },
     toggleTodo: (state, action) => {
@@ -38,18 +49,18 @@ const todoSlice = createSlice({
     // Handle the result of fetchTasks
     builder.addCase(fetchTasks.fulfilled, (state, action) => {
       state.tasks = action.payload;
+    })
+    .addCase(addTask.fulfilled, (state, action) => {
+      state.tasks.push(action.payload);
     });
   },
 });
 
 export const { addTodo, toggleTodo, setFilter } = todoSlice.actions;
 
-// Configure store with a callback to fetch initial data
 export const store = configureStore({
   reducer: {
     todos: todoSlice.reducer,
   },
-  middleware: (getDefaultMiddleware) => {
-    return getDefaultMiddleware().concat(fetchTasks); 
-  },
+
 });

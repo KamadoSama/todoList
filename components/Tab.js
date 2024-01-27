@@ -104,8 +104,11 @@ const TabRoute = () => {
       
       const onSubmit = async (data) => {
         try {
+          console.log("yed");
           dispatch(addTodo({ ...data }));
+          console.log("yaddds");
           await insertTask(db, { ...data });
+          console.log("yoood");
           reset();
           toggleModal();
           navigation.navigate('Tâches');
