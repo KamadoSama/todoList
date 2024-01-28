@@ -82,7 +82,13 @@ const todoSlice = createSlice({
         state.tasks = state.tasks.filter((task) => task.id !== action.payload);
       })
       .addCase(doneTask.fulfilled, (state, action) => {
-        state.tasks = state.tasks.filter((task) => task.id !== action.payload);
+        state.tasks = state.tasks.map((task) => {
+          if (task.id === action.payload) {
+            return { ...task, done: 1 };
+          } else {
+            return task;
+          }
+        });
       });
   },
 });

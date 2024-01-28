@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Pressable } from "react-native";
 import { List } from "react-native-paper";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useDispatch } from "react-redux";
-import { removeTask , doneTask } from "../redux/redux";
+import { removeTask, doneTask } from "../redux/redux";
 const Accordion = ({
   title,
   categorie,
@@ -13,6 +13,7 @@ const Accordion = ({
   heureDebut,
   date,
   id,
+  done,
 }) => {
   const [expanded, setExpanded] = useState(false);
   const handlePress = () => setExpanded(!expanded);
@@ -90,13 +91,16 @@ const Accordion = ({
         </View>
         <View style={{ flexDirection: "row" }}>
           <Pressable onPress={() => handleDone(id)}>
-          <Ionicons
-            name="checkbox-sharp"
-            size={24}
-            color="#277dfa"
-            paddingRight={10}
-          />
+            {done === 0 ? (
+              <Ionicons
+                name="checkbox-sharp"
+                size={24}
+                color="#277dfa"
+                paddingRight={10}
+              />
+            ) : null}
           </Pressable>
+
           <Pressable onPress={() => handleDelete(id)}>
             <Ionicons name="ios-trash-outline" size={24} color="#277dfa" />
           </Pressable>

@@ -105,9 +105,9 @@ const TabRoute = () => {
       const onSubmit = async (data) => {
         try {
           console.log("yed");
-          dispatch(addTodo({ ...data }));
+          dispatch(addTodo({ ...data, done: 0}));
           console.log("yaddds");
-          await insertTask(db, { ...data });
+          await insertTask(db, { ...data,done: 0});
           console.log("yoood");
           reset();
           toggleModal();

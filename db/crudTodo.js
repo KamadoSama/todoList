@@ -1,4 +1,4 @@
-const insertTask = (db, { titre, description, categorie, date, priorite, heureDebut, heureFin }) => {
+const insertTask = (db, { titre, description, categorie, date, priorite, heureDebut, heureFin , done }) => {
   return new Promise((resolve, reject) => {
     db.transaction(
       (tx) => {

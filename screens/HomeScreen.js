@@ -19,7 +19,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { fetchTasks , setSearchInput } from "../redux/redux";
 
 export default function HomeScreen() {
-  // const [tasks, setTasks] = useState();
+
   const [taskItems, setTaskItems] = useState([]);
   const [search, setSearch] = useState("");
   const [finished, setFinished] = useState(false);
@@ -62,6 +62,11 @@ export default function HomeScreen() {
   const filteredTasks = () => {
     let filtered = todos;
     filtered = filtered.filter(todo => todo.titre.toLowerCase().includes(searchInput.toLowerCase()));
+    if(finished){
+      filtered = filtered.filter(todo => todo.done === 1);
+    }else{
+      filtered = filtered.filter(todo => todo.done === 0);
+    }
     return filtered;
   }
 
@@ -133,6 +138,7 @@ export default function HomeScreen() {
                 heureFin={item.heureFin}
                 date={item.date}
                 id={item.id}
+                done={item.done}
               />
             );
           })}
