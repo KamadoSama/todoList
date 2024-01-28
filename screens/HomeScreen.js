@@ -19,7 +19,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { fetchTasks , setSearchInput } from "../redux/redux";
 
 export default function HomeScreen() {
-  const [tasks, setTasks] = useState();
+  // const [tasks, setTasks] = useState();
   const [taskItems, setTaskItems] = useState([]);
   const [search, setSearch] = useState("");
   const [finished, setFinished] = useState(false);
@@ -28,6 +28,7 @@ export default function HomeScreen() {
   const todos = useSelector((state) => state.todos.tasks);
   const filter = useSelector((state) => state.todos.tasks);
   const searchInput = useSelector((state) => state.todos.searchInput);
+  console.log(todos);
   // useEffect(() => {
   //   const fetchData = async () => {
   //     try {
@@ -56,6 +57,7 @@ export default function HomeScreen() {
   const handleSearchChange = (text) => {
     dispatch(setSearchInput(text));
   };
+
 
   const filteredTasks = () => {
     let filtered = todos;
@@ -130,7 +132,7 @@ export default function HomeScreen() {
                 heureDebut={item.heureDebut}
                 heureFin={item.heureFin}
                 date={item.date}
-                
+                id={item.id}
               />
             );
           })}

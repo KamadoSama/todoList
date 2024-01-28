@@ -30,7 +30,7 @@ const insertTask = (db, { titre, description, categorie, date, priorite, heureDe
     return new Promise((resolve, reject) => {
       db.transaction((tx) => {
         tx.executeSql(
-          'SELECT * FROM tasks',
+          'SELECT * FROM tasks ORDER BY date DESC',
           [],
           (_, results) => {
             const tasks = results.rows._array;
@@ -46,20 +46,44 @@ const insertTask = (db, { titre, description, categorie, date, priorite, heureDe
     });
   };
   
-
-const updateTask = (db,id) => {
-  db.transaction((tx) => {
-    tx.executeSql(
-      'UPDATE tasks SET done = 1 WHERE id = ?',
-      [id],
-      (_, results) => {
-        console.log('Tâche mise à jour avec succès!');
-      },
-      (_, error) => {
-        console.error('Erreur lors de la mise à jour de la tâche :', error);
-      }
-    );
+  const deleteTask = (db, id) => {
+    return new Promise((resolve, reject) => {
+      db.transaction((tx) => {
+        tx.executeSql(
+          'DELETE FROM tasks WHERE id = ?',
+          [id],
+          (_, results) => {
+            console.log('Tâche supprimée avec succès!');
+            // Only return the id if deletion is successful
+            resolve(id);
+          },
+          (_, error) => {
+            console.error('Erreur lors de la suppression de la tâche :', error);
+            reject(error);
+          }
+        );
+      });
+    });
+  };
+  
+const updateTask = (db, id) => {
+  return new Promise((resolve, reject) => {
+    db.transaction((tx) => {
+      tx.executeSql(
+        'UPDATE tasks SET done = 1 WHERE id = ?',
+        [id],
+        (_, results) => {
+          console.log('Tâche terminée avec succès!');
+          // Only return the id if deletion is successful
+          resolve(id);
+        },
+        (_, error) => {
+          console.error('Erreur lors de la suppression de la tâche :', error);
+          reject(error);
+        }
+      );
+    });
   });
-}
+};
 
-export { insertTask, retrieveTasks, updateTask};
+export { insertTask,updateTask ,retrieveTasks,deleteTask};

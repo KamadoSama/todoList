@@ -1,11 +1,30 @@
 import React, { useState, useRef } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Pressable } from "react-native";
 import { List } from "react-native-paper";
 import Ionicons from "@expo/vector-icons/Ionicons";
-const Accordion = ({ title, categorie ,description, footer, heureFin ,heureDebut, date  }) => {
+import { useDispatch } from "react-redux";
+import { removeTask , doneTask } from "../redux/redux";
+const Accordion = ({
+  title,
+  categorie,
+  description,
+  footer,
+  heureFin,
+  heureDebut,
+  date,
+  id,
+}) => {
   const [expanded, setExpanded] = useState(false);
   const handlePress = () => setExpanded(!expanded);
+  const dispatch = useDispatch();
+  const handleDelete = (id) => {
+    dispatch(removeTask(id));
+    console.log("id", id);
+  };
 
+  const handleDone = (id) => {
+    dispatch(doneTask(id));
+  };
   return (
     <View style={styles.accordContainer}>
       <List.Accordion
@@ -32,25 +51,55 @@ const Accordion = ({ title, categorie ,description, footer, heureFin ,heureDebut
           style={{ backgroundColor: "#fff" }}
           // description={description}
         /> */}
-        <Text style={{ fontWeight:'bold',marginTop:20, marginBottom:20}} >{description}</Text>
+        <Text style={{ fontWeight: "bold", marginTop: 20, marginBottom: 20 }}>
+          {description}
+        </Text>
       </List.Accordion>
       <View style={styles.footer}>
-        <View style={{width:'70%',flexDirection:'row',justifyContent:'space-between'}}>
-          <View style={{backgroundColor:"#d6deed", borderRadius:10,  padding:2,alignItems:'center',flexDirection:'row' }}>
-          <Text >
-            {heureDebut} - {heureFin} 
-          </Text>
+        <View
+          style={{
+            width: "70%",
+            flexDirection: "row",
+            justifyContent: "space-between",
+          }}
+        >
+          <View
+            style={{
+              backgroundColor: "#d6deed",
+              borderRadius: 10,
+              padding: 2,
+              alignItems: "center",
+              flexDirection: "row",
+            }}
+          >
+            <Text>
+              {heureDebut} - {heureFin}
+            </Text>
           </View>
-          <View style={{backgroundColor:"#d6deed", borderRadius:10,  padding:2,alignItems:'center',flexDirection:'row' }}>
-          <Text >
-            {date}
-          </Text>
+          <View
+            style={{
+              backgroundColor: "#d6deed",
+              borderRadius: 10,
+              padding: 2,
+              alignItems: "center",
+              flexDirection: "row",
+            }}
+          >
+            <Text>{date}</Text>
           </View>
-          
         </View>
-        <View style={{flexDirection:'row',}}>
-            <Ionicons name="ios-pencil-outline" size={24} color="#277dfa" />
+        <View style={{ flexDirection: "row" }}>
+          <Pressable onPress={() => handleDone(id)}>
+          <Ionicons
+            name="checkbox-sharp"
+            size={24}
+            color="#277dfa"
+            paddingRight={10}
+          />
+          </Pressable>
+          <Pressable onPress={() => handleDelete(id)}>
             <Ionicons name="ios-trash-outline" size={24} color="#277dfa" />
+          </Pressable>
         </View>
       </View>
     </View>

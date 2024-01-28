@@ -4,7 +4,7 @@ import {
   createAsyncThunk,
 } from "@reduxjs/toolkit";
 
-import { retrieveTasks, insertTask } from "../db/crudTodo";
+import { retrieveTasks, insertTask, deleteTask, updateTask } from "../db/crudTodo";
 import { db } from "../db/db";
 
 // Async thunk for fetching data
@@ -28,14 +28,35 @@ export const addTask = createAsyncThunk("todos/addTask", async (task) => {
   }
 });
 
+export const removeTask = createAsyncThunk("todos/deleteTask", async (id) => {
+  try {
+    const result = await deleteTask(db, id);
+    return result;
+  } catch (error) {
+    console.error("Erreur lors de la suppression de la tâche :", error);
+    throw error;
+  }
+});
+
+export const doneTask = createAsyncThunk("todos/updateTask", async (id) => {
+  try {
+    const result = await updateTask(db, id);
+    return result;
+  } catch (error) {
+    console.error("Erreur lors de la suppression de la tâche :", error);
+    throw error;
+  }
+});
+
+
 // Todo slice
 const todoSlice = createSlice({
   name: "todos",
-  initialState: { tasks: [], filter: "all", searchInput:'' }, // Initial state should be a plain object
+  initialState: { tasks: [], filter: "all", searchInput: "" }, // Initial state should be a plain object
   reducers: {
     addTodo: (state, action) => {
       //{type: "todos/addTodo", payload: {id: 1, titre: "My todo",date: "2021-05-05",description: "My description",heureDebut: "12:00",heureFin: "13:00",categorie: "Travail",priorite: "Haute",done:0}}
-      
+
       state.tasks.push(action.payload);
     },
     toggleTodo: (state, action) => {
@@ -50,16 +71,24 @@ const todoSlice = createSlice({
   },
   extraReducers: (builder) => {
     // Handle the result of fetchTasks
-    builder.addCase(fetchTasks.fulfilled, (state, action) => {
-      state.tasks = action.payload;
-    })
-    .addCase(addTask.fulfilled, (state, action) => {
-      state.tasks.push(action.payload);
-    });
+    builder
+      .addCase(fetchTasks.fulfilled, (state, action) => {
+        state.tasks = action.payload;
+      })
+      .addCase(addTask.fulfilled, (state, action) => {
+        state.tasks.push(action.payload);
+      })
+      .addCase(removeTask.fulfilled, (state, action) => {
+        state.tasks = state.tasks.filter((task) => task.id !== action.payload);
+      })
+      .addCase(doneTask.fulfilled, (state, action) => {
+        state.tasks = state.tasks.filter((task) => task.id !== action.payload);
+      });
   },
 });
 
-export const { addTodo, toggleTodo, setFilter,setSearchInput } = todoSlice.actions;
+export const { addTodo, toggleTodo, setFilter, setSearchInput } =
+  todoSlice.actions;
 
 export const store = configureStore({
   reducer: {
