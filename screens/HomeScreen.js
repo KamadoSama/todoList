@@ -75,17 +75,7 @@ export default function HomeScreen() {
     console.log(status);
   };
 
-  // const handleAddTask = () => {
-  //   Keyboard.dismiss();
-  //   setTaskItems([...taskItems, task]);
-  //   setFilteredTasks([...taskItems, task]);
-  //   setTasks(null);
-  // };
-  // const completeTask = (index) => {
-  //   let itemsCopy = [...taskItems];
-  //   itemsCopy.splice(index, 1);
-  //   setTaskItems(itemsCopy);
-  // };
+
 
   return (
     <View style={styles.container}>
@@ -124,8 +114,7 @@ export default function HomeScreen() {
       <View style={styles.taskWrapper}>
         <Text style={styles.sectionTitle}>Aujourd'hui</Text>
         <ScrollView  style={styles.items}>
-          {/* This is where the tasks will go */}
-          {/* <Task text={'Task 1'} /> */}
+
           {filteredTasks().map((item, index) => {
             return (
               <Accordion
@@ -144,18 +133,6 @@ export default function HomeScreen() {
           })}
         </ScrollView>
       </View>
-      {/* write a tasks */}
-      {/* <KeyboardAvoidingView 
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={styles.writeTaskWrapper}
-        >
-          <TextInput style={styles.input} placeholder={'Write a task'} value={task} onChangeText={text=>setTask(text)} />
-          <TouchableOpacity onPress={()=>handleAddTask()}>
-            <View style={styles.addWrapper}>
-              <Text style={styles.addText}>+</Text>
-            </View>
-          </TouchableOpacity>
-      </KeyboardAvoidingView> */}
     </View>
   );
 }
