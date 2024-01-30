@@ -1,10 +1,10 @@
 import React, { useMemo } from "react";
 import { Button, View, StyleSheet, Text, ScrollView } from "react-native";
 import { Image } from "expo-image";
-import Svg, {Circle} from 'react-native-svg';
+import Svg, { Circle } from "react-native-svg";
 import { useSelector } from "react-redux";
 import { format, subDays } from "date-fns";
-import PieChart from 'react-native-pie-chart'
+import PieChart from "react-native-pie-chart";
 export default function NotificationScreen({ navigation }) {
   const todos = useSelector((state) => state.todos.tasks);
 
@@ -12,9 +12,7 @@ export default function NotificationScreen({ navigation }) {
     const today = new Date();
     const startOfWeek = subDays(today, today.getDay());
 
-    return todos.filter(
-      (todo) => todo.done === 1 
-    );
+    return todos.filter((todo) => todo.done === 1);
   };
 
   const tasksDoneThisWeek = useMemo(() => getTasksDoneThisWeek(), [todos]);
@@ -26,17 +24,17 @@ export default function NotificationScreen({ navigation }) {
     return acc;
   }, {});
 
-  console.log('data',data);
+  console.log("data", data);
   const chartData = Object.keys(data).map((label) => ({
     name: label,
     value: data[label],
     color: "#277dfa", // You can implement getRandomColor function
   }));
-  console.log('chart',chartData);
-  const strokeWidth = 20;
-const size = 200;
-const center = size / 2;
-const radius = (size - strokeWidth) / 2;
+  console.log("chart", chartData);
+  const strokeWidth =5 ;
+  const size = 200;
+  const center = size / 2;
+  const radius = (size - strokeWidth) / 2;
 
   return (
     <View style={styles.container}>
@@ -69,16 +67,16 @@ const radius = (size - strokeWidth) / 2;
         </View>
         <ScrollView style={{ width: "90%", marginTop: 70 }}>
           <View style={{ backgroundColor: "#fff", height: 200, marginTop: 50 }}>
-            
-          <Svg viewBox={`0 0 ${size} ${size}`}>
-  <Circle
-    cx={center}
-    cy={center}
-    r={radius}
-    strokeWidth={strokeWidth}
-    stroke={'blue'}
-  />
-</Svg>
+            <Svg viewBox={`0 0 ${size} ${size}`}>
+              <Circle
+              fill={"#fff"}
+                cx={center}
+                cy={center}
+                r={radius}
+                strokeWidth={strokeWidth}
+                stroke={"#277dfa"}
+              />
+            </Svg>
           </View>
         </ScrollView>
       </View>
