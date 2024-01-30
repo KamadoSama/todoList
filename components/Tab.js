@@ -391,7 +391,7 @@ const TabRoute = () => {
               <Ionicons name="ios-bar-chart" size={24} color={focused ? "#277dfa" : "#b2bccd"}/>
             ),
           }}
-          name="Settings"
+          name="Statistiques"
           component={NotificationScreen}
         />
       </Tab.Navigator>
