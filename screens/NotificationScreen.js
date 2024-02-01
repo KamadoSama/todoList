@@ -24,17 +24,6 @@ export default function NotificationScreen({ navigation }) {
     return acc;
   }, {});
 
-  console.log("data", data);
-  const chartData = Object.keys(data).map((label) => ({
-    name: label,
-    value: data[label],
-    color: "#277dfa", // You can implement getRandomColor function
-  }));
-  console.log("chart", chartData);
-  const widthAndHeight = 200
-  const series = [4,1]
-  const sliceColor = ['#277dfa', '#ccc']
-
   return (
     <View style={styles.container}>
       <View style={styles.viewTop}>
@@ -65,8 +54,55 @@ export default function NotificationScreen({ navigation }) {
           </View>
         </View>
         <ScrollView style={{ width: "90%", marginTop: 70 }}>
-          <View style={{ backgroundColor: "#fff", height: 200, marginTop: 50 }}>
-          < ProgressCircle style={{ height: 200 }} progress={0.7} progressColor={'rgb(134, 65, 244)'} />
+          <View style={{ width: "100%", display:'flex',  marginTop: 50,flexDirection:'row',justifyContent:'space-between' }}>
+            <View style={styles.chartContent}>
+              <Text style={{fontWeight:500, fontSize:15, color:'#132033', textAlign:'center'}} >Stats hebdomadaires</Text>
+              <ProgressCircle
+                style={{ height: 150,  marginTop: 15 }}
+                progress={0.7}
+                progressColor={"#277dfa"}
+                strokeWidth={4}
+              />
+            </View>
+            <View  style={styles.rateContent}>
+              <View style={{...styles.rateChild,borderTopRightRadius:20,borderTopLeftRadius:10}}>
+              <Text style={styles.numberRateStyle}>4</Text>
+                <Text style={styles.textRateStyle}>Restantes</Text>
+              </View>
+              <View style={styles.rateChild} >
+              <Text style={styles.numberRateStyle}>2</Text>
+                <Text style={styles.textRateStyle}>En retard</Text>
+              </View>
+              <View style={{...styles.rateChild,borderBottomRightRadius:20, borderBottomLeftRadius:10}}>
+                <Text style={styles.numberRateStyle}>12</Text>
+                <Text style={styles.textRateStyle}>Terminées</Text>
+              </View>
+            </View>
+          </View>
+          <View style={{ width: "100%", display:'flex',  marginTop: 40,flexDirection:'row',justifyContent:'space-between' }}>
+            <View style={styles.chartContent}>
+              <Text style={{fontWeight:500, fontSize:15, color:'#132033', textAlign:'center'}} >Stats mensuelles</Text>
+              <ProgressCircle
+                style={{ height: 150,  marginTop: 15 }}
+                progress={0.7}
+                progressColor={"#277dfa"}
+                strokeWidth={4}
+              />
+            </View>
+            <View  style={styles.rateContent}>
+              <View style={{...styles.rateChild,borderTopRightRadius:20,borderTopLeftRadius:10}}>
+              <Text style={styles.numberRateStyle}>4</Text>
+                <Text style={styles.textRateStyle}>Restantes</Text>
+              </View>
+              <View style={styles.rateChild} >
+              <Text style={styles.numberRateStyle}>2</Text>
+                <Text style={styles.textRateStyle}>En retard</Text>
+              </View>
+              <View style={{...styles.rateChild,borderBottomRightRadius:20, borderBottomLeftRadius:10}}>
+                <Text style={styles.numberRateStyle}>12</Text>
+                <Text style={styles.textRateStyle}>Terminées</Text>
+              </View>
+            </View>
           </View>
         </ScrollView>
       </View>
@@ -110,4 +146,41 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
   },
+  chartContent: {
+    backgroundColor: "#fff",
+    width: "68%",
+    height: 200,
+   
+    display:'flex',
+    borderRadius:10
+  },
+  rateContent:{
+    width:"29%",
+    height:200,
+    display:'flex',
+    backgroundColor:"#fff",
+    borderRadius:10,
+    borderTopRightRadius:20,
+    borderTopLeftRadius:10,
+    borderBottomRightRadius:20,
+    justifyContent:"space-between",
+    flexDirection:"column"
+  },
+  rateChild:{
+    backgroundColor:"#277dfa",
+    height:"32%",
+    display:'flex',
+    alignItems:'center',
+    justifyContent:'center'
+  },
+  numberRateStyle:{
+    fontWeight:'bold',
+    color:"#fff",
+    fontSize:20
+  },
+  textRateStyle:{
+    fontWeight:'300',
+    color:"#fff",
+    fontSize:13
+  }
 });
