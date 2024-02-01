@@ -1,10 +1,10 @@
 import React, { useMemo } from "react";
 import { Button, View, StyleSheet, Text, ScrollView } from "react-native";
 import { Image } from "expo-image";
-import Svg, { Circle } from "react-native-svg";
+import { ProgressCircle } from "react-native-svg-charts";
 import { useSelector } from "react-redux";
 import { format, subDays } from "date-fns";
-import PieChart from "react-native-pie-chart";
+
 export default function NotificationScreen({ navigation }) {
   const todos = useSelector((state) => state.todos.tasks);
 
@@ -31,10 +31,9 @@ export default function NotificationScreen({ navigation }) {
     color: "#277dfa", // You can implement getRandomColor function
   }));
   console.log("chart", chartData);
-  const strokeWidth =5 ;
-  const size = 200;
-  const center = size / 2;
-  const radius = (size - strokeWidth) / 2;
+  const widthAndHeight = 200
+  const series = [4,1]
+  const sliceColor = ['#277dfa', '#ccc']
 
   return (
     <View style={styles.container}>
@@ -67,16 +66,7 @@ export default function NotificationScreen({ navigation }) {
         </View>
         <ScrollView style={{ width: "90%", marginTop: 70 }}>
           <View style={{ backgroundColor: "#fff", height: 200, marginTop: 50 }}>
-            <Svg viewBox={`0 0 ${size} ${size}`}>
-              <Circle
-              fill={"#fff"}
-                cx={center}
-                cy={center}
-                r={radius}
-                strokeWidth={strokeWidth}
-                stroke={"#277dfa"}
-              />
-            </Svg>
+          < ProgressCircle style={{ height: 200 }} progress={0.7} progressColor={'rgb(134, 65, 244)'} />
           </View>
         </ScrollView>
       </View>
