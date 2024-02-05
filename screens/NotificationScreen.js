@@ -7,23 +7,39 @@ import { format, subDays } from "date-fns";
 
 export default function NotificationScreen({ navigation }) {
   const todos = useSelector((state) => state.todos.tasks);
+  console.log("todos_____________",todos);
 
   const getTasksDoneThisWeek = () => {
     const today = new Date();
     const startOfWeek = subDays(today, today.getDay());
-
     return todos.filter((todo) => todo.done === 1);
   };
+  const getTasksForThisWeek = () => {
+    const currentDate = new Date();
 
-  const tasksDoneThisWeek = useMemo(() => getTasksDoneThisWeek(), [todos]);
-  const percentageDone = (tasksDoneThisWeek.length / todos.length) * 100;
+    const tasksThisWeek = todos.filter(task => {
+      const taskDate = new Date(task.date);
+      const isSameWeek =
+        currentDate.getFullYear() === taskDate.getFullYear() &&
+        currentDate.getMonth() === taskDate.getMonth() &&
+        currentDate.getDate() - taskDate.getDate() <= 7;
 
-  const data = tasksDoneThisWeek.reduce((acc, task) => {
-    const taskDate = format(new Date(task.date), "EEEE");
-    acc[taskDate] = (acc[taskDate] || 0) + 1;
-    return acc;
-  }, {});
+      return isSameWeek;
+    });
 
+    return tasksThisWeek;
+  };
+
+  console.log("getTasksForThisWeek", getTasksDoneThisWeek());
+
+  const tasksThisWeek = getTasksForThisWeek();
+  const totalTasks = tasksThisWeek.length;
+  const completedTasks = tasksThisWeek.filter(task => task.done === 1).length;
+  console.log("totalTasks", totalTasks);
+  console.log("completedTasks", completedTasks);
+  // Calculer le pourcentage
+  const percentageCompleted = totalTasks === 0 ? 0 : (1-(totalTasks - completedTasks )/ totalTasks) ;
+  console.log("percentageCompleted", percentageCompleted);
   return (
     <View style={styles.container}>
       <View style={styles.viewTop}>
@@ -59,14 +75,14 @@ export default function NotificationScreen({ navigation }) {
               <Text style={{fontWeight:500, fontSize:15, color:'#132033', textAlign:'center'}} >Stats hebdomadaires</Text>
               <ProgressCircle
                 style={{ height: 150,  marginTop: 15 }}
-                progress={0.7}
+                progress={percentageCompleted}
                 progressColor={"#277dfa"}
                 strokeWidth={4}
               />
             </View>
             <View  style={styles.rateContent}>
               <View style={{...styles.rateChild,borderTopRightRadius:20,borderTopLeftRadius:10}}>
-              <Text style={styles.numberRateStyle}>4</Text>
+              <Text style={styles.numberRateStyle}>{totalTasks - completedTasks}</Text>
                 <Text style={styles.textRateStyle}>Restantes</Text>
               </View>
               <View style={styles.rateChild} >
@@ -74,7 +90,7 @@ export default function NotificationScreen({ navigation }) {
                 <Text style={styles.textRateStyle}>En retard</Text>
               </View>
               <View style={{...styles.rateChild,borderBottomRightRadius:20, borderBottomLeftRadius:10}}>
-                <Text style={styles.numberRateStyle}>12</Text>
+                <Text style={styles.numberRateStyle}>{completedTasks}</Text>
                 <Text style={styles.textRateStyle}>Terminées</Text>
               </View>
             </View>

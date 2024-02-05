@@ -46,21 +46,21 @@ const TabRoute = () => {
       const handleStartDateTimeChange = (event, selectedDate) => {
         const currentDate = selectedDate;
         setStartDateTime(formatTime(currentDate));
-        setValue("heureDebut", formatTime(currentDate));
+        setValue("heureDebut", currentDate.toISOString());
         setShowStartPicker(!showStartPicker);
       };
     
       const handleEndDateTimeChange = (event, selectedDate) => {
         const currentDate = selectedDate;
         setEndDateTime(formatTime(currentDate));
-        setValue("heureFin", formatTime(currentDate));
+        setValue("heureFin",currentDate.toISOString()) ;
         setShowEndPicker(!showEndPicker);
       };
     
       const handleDateChange = ({ type }, selectedDate) => {
         const currentDate = selectedDate;
         setTaskDate(format(currentDate, "dd-MM-yyyy"));
-        setValue("date", format(currentDate, "dd-MM-yyyy") );
+        setValue("date", currentDate.toISOString() );
         togglePicker();
       };
     
@@ -119,6 +119,10 @@ const TabRoute = () => {
         }
       };
       
+      handleCancel = () => {
+        reset();
+        toggleModal();
+      }
   return (
     <>
        <Modal
@@ -314,6 +318,7 @@ const TabRoute = () => {
                 mode="contained"
                 style={{ borderRadius: 5, backgroundColor: "#d6deeb" }}
                 textColor="#000"
+                onPress={handleCancel}
               >
                 Annuler
               </Button>

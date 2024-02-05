@@ -4,6 +4,7 @@ import { List } from "react-native-paper";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useDispatch } from "react-redux";
 import { removeTask, doneTask } from "../redux/redux";
+import { format } from 'date-fns';
 const Accordion = ({
   title,
   categorie,
@@ -25,6 +26,12 @@ const Accordion = ({
 
   const handleDone = (id) => {
     dispatch(doneTask(id));
+  };
+  const formatTime = (date) => {
+    date = new Date(date);
+    const hours = date.getHours().toString().padStart(2, "0");
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+    return `${hours}:${minutes}`;
   };
   return (
     <View style={styles.accordContainer}>
@@ -74,7 +81,7 @@ const Accordion = ({
             }}
           >
             <Text>
-              {heureDebut} - {heureFin}
+              {formatTime(heureDebut)} - {formatTime(heureFin)}
             </Text>
           </View>
           <View
@@ -86,7 +93,7 @@ const Accordion = ({
               flexDirection: "row",
             }}
           >
-            <Text>{date}</Text>
+            <Text>{format(date, "dd-MM-yyy")}</Text>
           </View>
         </View>
         <View style={{ flexDirection: "row" }}>

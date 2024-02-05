@@ -53,7 +53,7 @@ export default function HomeScreen() {
   const groupTasksByDate = tasks => {
     const groupedTasks = {};
     tasks.forEach(task => {
-      const taskDate = task.date;
+      const taskDate =  format(task.date,"dd-MM-yyyy") ;
       if (!groupedTasks[taskDate]) {
         groupedTasks[taskDate] = [];
       }
