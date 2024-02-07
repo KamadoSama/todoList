@@ -71,22 +71,26 @@ export default function NotificationScreen({ navigation }) {
         </View>
         <ScrollView style={{ width: "90%", marginTop: 70 }}>
           <View style={{ width: "100%", display:'flex',  marginTop: 50,flexDirection:'row',justifyContent:'space-between' }}>
-            <View style={styles.chartContent}>
+            <View style={{...styles.chartContent, position:'relative'}}>
               <Text style={{fontWeight:500, fontSize:15, color:'#132033', textAlign:'center'}} >Stats hebdomadaires</Text>
               <ProgressCircle
-                style={{ height: 150,  marginTop: 15 }}
+                style={{ height: 150,  marginTop: 15, backgroundColor:"#fff" }}
                 progress={percentageCompleted}
                 progressColor={"#277dfa"}
                 strokeWidth={4}
               />
+              <View style={{position:'absolute',top:'40%', left:'38%' , display:'flex',alignItems:'center',justifyContent:'center' }}>
+                <Text style={{...styles.numberRateStyle, color:'#132033'}}>{totalTasks - completedTasks}</Text>
+                <Text style={{...styles.textRateStyle,color:'#132033'}}>Restantes</Text>
+              </View>
             </View>
             <View  style={styles.rateContent}>
               <View style={{...styles.rateChild,borderTopRightRadius:20,borderTopLeftRadius:10}}>
-              <Text style={styles.numberRateStyle}>{totalTasks - completedTasks}</Text>
+                <Text style={styles.numberRateStyle}>{totalTasks - completedTasks}</Text>
                 <Text style={styles.textRateStyle}>Restantes</Text>
               </View>
               <View style={styles.rateChild} >
-              <Text style={styles.numberRateStyle}>2</Text>
+                <Text style={styles.numberRateStyle}>2</Text>
                 <Text style={styles.textRateStyle}>En retard</Text>
               </View>
               <View style={{...styles.rateChild,borderBottomRightRadius:20, borderBottomLeftRadius:10}}>
@@ -95,7 +99,7 @@ export default function NotificationScreen({ navigation }) {
               </View>
             </View>
           </View>
-          <View style={{ width: "100%", display:'flex',  marginTop: 40,flexDirection:'row',justifyContent:'space-between' }}>
+          <View style={{ width: "100%", display:'flex',  marginTop: 40, marginBottom:40 ,flexDirection:'row',justifyContent:'space-between' }}>
             <View style={styles.chartContent}>
               <Text style={{fontWeight:500, fontSize:15, color:'#132033', textAlign:'center'}} >Stats mensuelles</Text>
               <ProgressCircle

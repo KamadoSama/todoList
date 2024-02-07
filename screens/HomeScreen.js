@@ -111,6 +111,7 @@ export default function HomeScreen() {
         footer={"This is a footer"}
         heureDebut={item.heureDebut}
         heureFin={item.heureFin}
+        priorite={item.priorite}
         date={item.date}
         id={item.id}
         done={item.done}
