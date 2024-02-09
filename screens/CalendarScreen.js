@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 
 import { Agenda, LocaleConfig } from "react-native-calendars";
-import {Card, Avatar} from 'react-native-paper';
-import {View, TouchableOpacity,Text, StyleSheet} from 'react-native';
-import { format } from 'date-fns';
+import { Card, Avatar } from "react-native-paper";
+import { View, Modal, TouchableOpacity, Text, StyleSheet } from "react-native";
+import { format } from "date-fns";
 import { useSelector } from "react-redux";
 const timeToString = (time) => {
   const date = new Date(time);
-  return date.toISOString().split('T')[0];
+  return date.toISOString().split("T")[0];
 };
 LocaleConfig.locales["fr"] = {
   monthNames: [
@@ -55,43 +55,46 @@ LocaleConfig.defaultLocale = "fr";
 
 const CalendarScreen = () => {
   const todos = useSelector((state) => state.todos.tasks);
-  const [items, setItems] = useState({});
+  const [todosItems, setTodoItems] = useState({});
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedTask, setSelectedTask] = useState(null);
   const date = new Date();
-  const today = format(date, 'yyyy-MM-dd');
+  const today = format(date, "yyyy-MM-dd");
+
   useEffect(() => {
- 
+    setTodoItems({});
+    let items = {};
     todos.forEach((task) => {
-      const taskDate = format(task.date, 'yyyy-MM-dd');
-      console.log('taskDate',taskDate);
+      const taskDate = format(task.date, "yyyy-MM-dd");
       if (!items[taskDate]) {
         items[taskDate] = [];
       }
       items[taskDate].push({
         name: task.titre,
+        description: task.description,
         height: 61,
-      })
-      
-    } );
-
-    const newItems = {};
-    
-  
-    Object.keys(items).forEach((key) => {
-      newItems[key] = items[key];
-      
+      });
     });
-    setItems(newItems);
+
+    setTodoItems(items);
   }, [todos]);
 
   const loadItems = (day) => {
-    const formattedDay = format(day.timestamp, 'yyyy-MM-dd');
+    const formattedDay = format(day.timestamp, "yyyy-MM-dd");
     console.log(day);
-    if (!items[formattedDay]) {
-      items[formattedDay] = [];
+    if (!todosItems[formattedDay]) {
+      todosItems[formattedDay] = [];
     }
-    
+  };
+  const handleOpenModal = (task) => {
+    setSelectedTask(task);
+    setModalVisible(true);
   };
 
+  const handleCloseModal = () => {
+    setSelectedTask(null);
+    setModalVisible(false);
+  };
 
   const renderEmptyDate = () => {
     return (
@@ -103,16 +106,22 @@ const CalendarScreen = () => {
 
   const renderItem = (item) => {
     return (
-      <TouchableOpacity style={{marginRight: 10, marginTop: 17}}>
+      <TouchableOpacity
+        onPress={() => handleOpenModal(item)}
+        style={{ marginRight: 10, marginTop: 17 }}
+      >
         <Card>
           <Card.Content>
             <View
               style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}>
-              <Text>{item.name}</Text>
+                flexDirection: "row",
+                justifyContent: "space-between",
+              }}
+            >
+              <View>
+                <Text>{item.name}</Text>
+                <Text style={styles.description}>{item.description}</Text>
+              </View>
               <Avatar.Text label="J" />
             </View>
           </Card.Content>
@@ -122,14 +131,35 @@ const CalendarScreen = () => {
   };
 
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       <Agenda
-        items={items}
+        items={todosItems}
         loadItemsForMonth={loadItems}
         selected={today}
         renderItem={renderItem}
         renderEmptyDate={renderEmptyDate}
       />
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={handleCloseModal}
+      >
+        <View
+          style={styles.centeredView}
+        >
+          {selectedTask && (
+            <View>
+              <Text>{selectedTask.name}</Text>
+              <Text>{selectedTask.description}</Text>
+
+              <TouchableOpacity onPress={handleCloseModal}>
+                <Text>Fermer</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -137,14 +167,26 @@ const CalendarScreen = () => {
 const styles = StyleSheet.create({
   emptyDateContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     height: 50,
   },
   emptyDateText: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: 'gray',
+    fontWeight: "bold",
+    color: "gray",
+  },
+  description: {
+    fontSize: 14,
+    color: "gray",
+    overflow: "hidden",
+    width: 200,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22,
   },
 });
 
