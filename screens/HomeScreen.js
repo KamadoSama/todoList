@@ -26,9 +26,6 @@ export default function HomeScreen() {
   const searchInput = useSelector((state) => state.todos.searchInput);
   console.log(todos);
 
-  useEffect(() => {
-  
-  }, [taskItems, search]);
 
   useEffect(() => {
     dispatch(fetchTasks());

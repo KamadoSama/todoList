@@ -387,7 +387,7 @@ const TabRoute = () => {
               />
             ),
           }}
-          name="Calendar"
+          name="Calendrier"
           component={CalendarScreen}
         />
         <Tab.Screen
