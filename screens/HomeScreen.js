@@ -1,22 +1,18 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
-  KeyboardAvoidingView,
   TouchableOpacity,
   StyleSheet,
   Text,
   View,
   TextInput,
-  Keyboard,
   ScrollView,
 } from "react-native";
-import Task from "../components/Task";
 import Accordion from "../components/Accordion";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Button} from 'react-native-paper';
-import { retrieveTasks } from "../db/crudTodo";
-import { db } from "../db/db";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchTasks , setSearchInput } from "../redux/redux";
+import { format } from 'date-fns';
 
 export default function HomeScreen() {
 
@@ -26,29 +22,10 @@ export default function HomeScreen() {
   // const [filteredTasks, setFilteredTasks] = useState([]);
   const dispatch = useDispatch();
   const todos = useSelector((state) => state.todos.tasks);
-  const filter = useSelector((state) => state.todos.tasks);
+  // const filter = useSelector((state) => state.todos.tasks);
   const searchInput = useSelector((state) => state.todos.searchInput);
   console.log(todos);
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-        
-  //       const task = await retrieveTasks(db);
-  //       console.log(task);
-  //       setTaskItems(task);
-  //       setFilteredTasks(task);
-  //     } catch (error) {
-  //       console.error('Erreur lors de la récupération des tâches :', error);
-  //     }
-  //   };
 
-  //   fetchData();
-
-  // }, []);
-
-  useEffect(() => {
-  
-  }, [taskItems, search]);
 
   useEffect(() => {
     dispatch(fetchTasks());
@@ -59,34 +36,90 @@ export default function HomeScreen() {
   };
 
 
-  const filteredTasks = () => {
+  const filteredTasks = useMemo(() => {
     let filtered = todos;
     filtered = filtered.filter(todo => todo.titre.toLowerCase().includes(searchInput.toLowerCase()));
-    if(finished){
+    if (finished) {
       filtered = filtered.filter(todo => todo.done === 1);
-    }else{
+    } else {
       filtered = filtered.filter(todo => todo.done === 0);
     }
     return filtered;
+  }, [todos, searchInput, finished]);
+
+  const groupTasksByDate = tasks => {
+    const groupedTasks = {};
+    tasks.forEach(task => {
+      const taskDate =  format(task.date,"dd-MM-yyyy") ;
+      if (!groupedTasks[taskDate]) {
+        groupedTasks[taskDate] = [];
+      }
+      groupedTasks[taskDate].push(task);
+    });
+    return groupedTasks;
+  };
+
+  const renderTasksByDate = groupedTasks => {
+    const today = format(new Date(), 'dd-MM-yyyy');
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const tomorrowFormatted = format(tomorrow, 'dd-MM-yyyy');
+
+    
+  const renderedTasks = [];
+  Object.keys(groupedTasks)
+  .filter(date => date !== today && date !== tomorrowFormatted)
+  .forEach(date => {
+    renderedTasks.push(
+      <View key={date}>
+        <Text style={styles.sectionTitle}>{date}</Text>
+        {renderTasks(groupedTasks[date])}
+      </View>
+    );
+  });
+  if (groupedTasks[today]) {
+    renderedTasks.push(
+      <View key={today}>
+        <Text style={styles.sectionTitle}>Aujourd'hui</Text>
+        {renderTasks(groupedTasks[today])}
+      </View>
+    );
   }
 
+  if (groupedTasks[tomorrowFormatted]) {
+    renderedTasks.push(
+      <View key={tomorrowFormatted}>
+        <Text style={styles.sectionTitle}>Demain</Text>
+        {renderTasks(groupedTasks[tomorrowFormatted])}
+      </View>
+    );
+  }
+
+
+  return renderedTasks;
+  };
+  const renderTasks = tasks => {
+    return tasks.map((item) => (
+      <Accordion
+        key={item.id}
+        title={item.titre}
+        categorie={item.categorie}
+        description={item.description}
+        footer={"This is a footer"}
+        heureDebut={item.heureDebut}
+        heureFin={item.heureFin}
+        priorite={item.priorite}
+        date={item.date}
+        id={item.id}
+        done={item.done}
+      />
+    ));
+  };
   const handleFinish = (status) => {
     setFinished(status);
     console.log(status);
   };
-
-  // const handleAddTask = () => {
-  //   Keyboard.dismiss();
-  //   setTaskItems([...taskItems, task]);
-  //   setFilteredTasks([...taskItems, task]);
-  //   setTasks(null);
-  // };
-  // const completeTask = (index) => {
-  //   let itemsCopy = [...taskItems];
-  //   itemsCopy.splice(index, 1);
-  //   setTaskItems(itemsCopy);
-  // };
-
+  const renderedTasksByDate = useMemo(() => renderTasksByDate(groupTasksByDate(filteredTasks)), [filteredTasks]);
   return (
     <View style={styles.container}>
       <View style={styles.topContainer}>
@@ -122,40 +155,10 @@ export default function HomeScreen() {
       </View>
       {/* Today's Tasks */}
       <View style={styles.taskWrapper}>
-        <Text style={styles.sectionTitle}>Aujourd'hui</Text>
-        <ScrollView  style={styles.items}>
-          {/* This is where the tasks will go */}
-          {/* <Task text={'Task 1'} /> */}
-          {filteredTasks().map((item, index) => {
-            return (
-              <Accordion
-                key={index}
-                title={item.titre}
-                categorie={item.categorie}
-                description={item.description}
-                footer={"This is a footer"}
-                heureDebut={item.heureDebut}
-                heureFin={item.heureFin}
-                date={item.date}
-                id={item.id}
-                done={item.done}
-              />
-            );
-          })}
-        </ScrollView>
+      <ScrollView style={styles.items}>
+        {renderedTasksByDate}
+      </ScrollView>
       </View>
-      {/* write a tasks */}
-      {/* <KeyboardAvoidingView 
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={styles.writeTaskWrapper}
-        >
-          <TextInput style={styles.input} placeholder={'Write a task'} value={task} onChangeText={text=>setTask(text)} />
-          <TouchableOpacity onPress={()=>handleAddTask()}>
-            <View style={styles.addWrapper}>
-              <Text style={styles.addText}>+</Text>
-            </View>
-          </TouchableOpacity>
-      </KeyboardAvoidingView> */}
     </View>
   );
 }
@@ -219,6 +222,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 15,
     fontWeight: "bold",
+    marginBottom: 10,
   },
   items: {
     marginTop: 30,

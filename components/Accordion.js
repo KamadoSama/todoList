@@ -4,11 +4,12 @@ import { List } from "react-native-paper";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useDispatch } from "react-redux";
 import { removeTask, doneTask } from "../redux/redux";
+import { format } from 'date-fns';
 const Accordion = ({
   title,
   categorie,
   description,
-  footer,
+  priorite,
   heureFin,
   heureDebut,
   date,
@@ -26,12 +27,31 @@ const Accordion = ({
   const handleDone = (id) => {
     dispatch(doneTask(id));
   };
+  const formatTime = (date) => {
+    date = new Date(date);
+    const hours = date.getHours().toString().padStart(2, "0");
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+    return `${hours}:${minutes}`;
+  };
+  
+  let color = "#277dfa";
+  if(priorite === 'haute'){
+    color = '#ff009d'
+    console.log('priorite',priorite )
+  }
+  if(priorite === 'moyenne'){
+    color = '#3af183'
+  }
+  if(priorite === 'basse'){
+    color = '#267fff'
+  }
   return (
     <View style={styles.accordContainer}>
+      
       <List.Accordion
         title={title}
         description={categorie}
-        left={(props) => <List.Icon {...props} icon="circle-outline" />}
+        left={(props) => <List.Icon {...props} color={color} icon="circle" />}
         right={(props) => (
           <List.Icon
             {...props}
@@ -45,8 +65,7 @@ const Accordion = ({
           borderBottomColor: "#d6deeb",
           borderBottomWidth: 1,
           backgroundColor: "#fff",
-        }}
-      >
+        }}>
         {/* <List.Item
           title={description}
           style={{ backgroundColor: "#fff" }}
@@ -62,8 +81,7 @@ const Accordion = ({
             width: "70%",
             flexDirection: "row",
             justifyContent: "space-between",
-          }}
-        >
+          }}>
           <View
             style={{
               backgroundColor: "#d6deed",
@@ -71,10 +89,9 @@ const Accordion = ({
               padding: 2,
               alignItems: "center",
               flexDirection: "row",
-            }}
-          >
+            }}>
             <Text>
-              {heureDebut} - {heureFin}
+              {formatTime(heureDebut)} - {formatTime(heureFin)}
             </Text>
           </View>
           <View
@@ -86,7 +103,7 @@ const Accordion = ({
               flexDirection: "row",
             }}
           >
-            <Text>{date}</Text>
+            <Text>{format(date, "dd-MM-yyy")}</Text>
           </View>
         </View>
         <View style={{ flexDirection: "row" }}>
@@ -121,6 +138,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     borderRadius: 20,
     overflow: "hidden",
+    position:'relative'
   },
   accordHeader: {
     padding: 12,
