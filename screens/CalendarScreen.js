@@ -56,8 +56,8 @@ LocaleConfig.defaultLocale = "fr";
 const CalendarScreen = () => {
   const todos = useSelector((state) => state.todos.tasks);
   const [todosItems, setTodoItems] = useState({});
-  const [modalVisible, setModalVisible] = useState(false);
-  const [selectedTask, setSelectedTask] = useState(null);
+  // const [modalVisible, setModalVisible] = useState(false);
+  // const [selectedTask, setSelectedTask] = useState(null);
   const date = new Date();
   const today = format(date, "yyyy-MM-dd");
 
@@ -86,15 +86,15 @@ const CalendarScreen = () => {
       todosItems[formattedDay] = [];
     }
   };
-  const handleOpenModal = (task) => {
-    setSelectedTask(task);
-    setModalVisible(true);
-  };
+  // const handleOpenModal = (task) => {
+  //   setSelectedTask(task);
+  //   setModalVisible(true);
+  // };
 
-  const handleCloseModal = () => {
-    setSelectedTask(null);
-    setModalVisible(false);
-  };
+  // const handleCloseModal = () => {
+  //   setSelectedTask(null);
+  //   setModalVisible(false);
+  // };
 
   const renderEmptyDate = () => {
     return (
@@ -106,10 +106,10 @@ const CalendarScreen = () => {
 
   const renderItem = (item) => {
     return (
-      <TouchableOpacity
-        onPress={() => handleOpenModal(item)}
-        style={{ marginRight: 10, marginTop: 17 }}
-      >
+      // <TouchableOpacity
+      //   onPress={() => handleOpenModal(item)}
+      //   style={{ marginRight: 10, marginTop: 17 }}
+      // >
         <Card>
           <Card.Content>
             <View
@@ -126,7 +126,7 @@ const CalendarScreen = () => {
             </View>
           </Card.Content>
         </Card>
-      </TouchableOpacity>
+      // </TouchableOpacity>
     );
   };
 
@@ -139,11 +139,12 @@ const CalendarScreen = () => {
         renderItem={renderItem}
         renderEmptyDate={renderEmptyDate}
       />
-      <Modal
+      {/* <Modal
         animationType="slide"
         transparent={true}
         visible={modalVisible}
         onRequestClose={handleCloseModal}
+        style={{elevation:1}}
       >
         <View
           style={styles.centeredView}
@@ -159,7 +160,7 @@ const CalendarScreen = () => {
             </View>
           )}
         </View>
-      </Modal>
+      </Modal> */}
     </View>
   );
 };

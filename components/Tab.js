@@ -2,130 +2,163 @@ import React, { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import {HomeScreen,FindScreen,NotificationScreen,CalendarScreen,AddScreen,} from "../screens";
-import {View,TouchableOpacity,StyleSheet,Modal,Pressable,Text,} from "react-native";
+import {
+  HomeScreen,
+  NotifScreen,
+  StatScreen,
+  CalendarScreen,
+  AddScreen,
+} from "../screens";
+import {
+  View,
+  TouchableOpacity,
+  StyleSheet,
+  Modal,
+  Pressable,
+  Text,
+} from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { PickerLabel, TextInputLabel } from ".";
 import { Button } from "react-native-paper";
 import { useForm, Controller } from "react-hook-form";
 import { insertTask } from "../db/crudTodo";
-import { db,init } from "../db/db";
-import { format } from 'date-fns';
+import { db, init } from "../db/db";
+import { format } from "date-fns";
 import { useDispatch } from "react-redux";
 import { addTodo } from "../redux/redux";
 const Tab = createBottomTabNavigator();
 const CustomTabBarButton = ({ children, onPress }) => (
-  <TouchableOpacity style={{top: -30,justifyContent: "center",alignItems: "center",...styles.shadow,}}onPress={onPress}>
-    <View style={{width: 60,height: 60,borderRadius: 20,backgroundColor: "#277dfa",}}>
+  <TouchableOpacity
+    style={{
+      top: -30,
+      justifyContent: "center",
+      alignItems: "center",
+      ...styles.shadow,
+    }}
+    onPress={onPress}
+  >
+    <View
+      style={{
+        width: 60,
+        height: 60,
+        borderRadius: 20,
+        backgroundColor: "#277dfa",
+      }}
+    >
       {children}
     </View>
   </TouchableOpacity>
 );
 
 const TabRoute = () => {
-    const dispatch = useDispatch();
-    useEffect(() => {
-        init(db);   
-      }, []);
-    
-      const navigation = useNavigation();
-      const [selectedDate, setSelectedDate] = useState(new Date());
-      const [showDatePicker, setShowDatePicker] = useState(false);
-      const [taskDate, setTaskDate] = useState("");
-      const [selectedPriority, setSelectedPriority] = useState();
-      const [startDateTime, setStartDateTime] = useState("");
-      const [endDateTime, setEndDateTime] = useState("");
-      const [showStartPicker, setShowStartPicker] = useState(false);
-      const [showEndPicker, setShowEndPicker] = useState(false);
-    
-      const {control,handleSubmit,setValue,register,formState: { errors },} = useForm();
-    
-      const showStartDateTimePicker = () => setShowStartPicker(true);
-      const showEndDateTimePicker = () => setShowEndPicker(true);
-    
-      const handleStartDateTimeChange = (event, selectedDate) => {
-        const currentDate = selectedDate;
-        setStartDateTime(formatTime(currentDate));
-        setValue("heureDebut", currentDate.toISOString());
-        setShowStartPicker(!showStartPicker);
-      };
-    
-      const handleEndDateTimeChange = (event, selectedDate) => {
-        const currentDate = selectedDate;
-        setEndDateTime(formatTime(currentDate));
-        setValue("heureFin",currentDate.toISOString()) ;
-        setShowEndPicker(!showEndPicker);
-      };
-    
-      const handleDateChange = ({ type }, selectedDate) => {
-        const currentDate = selectedDate;
-        setTaskDate(format(currentDate, "dd-MM-yyyy"));
-        setValue("date", currentDate.toISOString() );
-        togglePicker();
-      };
-    
-      const togglePicker = () => {
-        setShowDatePicker(!showDatePicker);
-      };
-    
-      const [modalVisible, setModalVisible] = useState(false);
-      const reset = () => {
-        setValue("titre", "");
-        setValue("description", "");
-        setValue("categorie", "");
-        setValue("date", "");
-        setValue("priorite", "");
-        setValue("heureDebut", "");
-        setValue("heureFin", "");
-        setTaskDate("");
-        setSelectedPriority("");
-        setStartDateTime("");
-        setEndDateTime("");
-      }
-    
-      const toggleModal = () => {
-        console.log("toggleModal");
-        !modalVisible ?  reset() : null;
-        setModalVisible(!modalVisible);
-      };
-    
-      const pickerItems = [
-        { label: "haute", value: "haute", color: "#ff009d" },
-        { label: "basse", value: "basse", color: "#3af183" },
-        { label: "moyenne", value: "moyenne", color: "#267fff" },
-      ];
-    
-      const formatTime = (date) => {
-        const hours = date.getHours().toString().padStart(2, "0");
-        const minutes = date.getMinutes().toString().padStart(2, "0");
-        return `${hours}:${minutes}`;
-      };
-     
-      
-      const onSubmit = async (data) => {
-        try {
-          console.log("yed");
-          dispatch(addTodo({ ...data, done: 0}));
-          console.log("yaddds");
-          await insertTask(db, { ...data,done: 0});
-          console.log("yoood");
-          reset();
-          toggleModal();
-          navigation.navigate('Tâches');
-          console.log(data);
-        } catch (error) {
-          console.error("Erreur lors de la soumission du formulaire :", error);
-          // Gérer l'erreur de manière appropriée
-        }
-      };
-      
-      handleCancel = () => {
-        reset();
-        toggleModal();
-      }
+  const dispatch = useDispatch();
+  useEffect(() => {
+    init(db);
+  }, []);
+
+  const navigation = useNavigation();
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [taskDate, setTaskDate] = useState("");
+  const [selectedPriority, setSelectedPriority] = useState();
+  const [startDateTime, setStartDateTime] = useState("");
+  const [endDateTime, setEndDateTime] = useState("");
+  const [showStartPicker, setShowStartPicker] = useState(false);
+  const [showEndPicker, setShowEndPicker] = useState(false);
+
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    register,
+    formState: { errors },
+  } = useForm();
+
+  const showStartDateTimePicker = () => setShowStartPicker(true);
+  const showEndDateTimePicker = () => setShowEndPicker(true);
+
+  const handleStartDateTimeChange = (event, selectedDate) => {
+    const currentDate = selectedDate;
+    setStartDateTime(formatTime(currentDate));
+    setValue("heureDebut", currentDate.toISOString());
+    setShowStartPicker(!showStartPicker);
+  };
+
+  const handleEndDateTimeChange = (event, selectedDate) => {
+    const currentDate = selectedDate;
+    setEndDateTime(formatTime(currentDate));
+    setValue("heureFin", currentDate.toISOString());
+    setShowEndPicker(!showEndPicker);
+  };
+
+  const handleDateChange = ({ type }, selectedDate) => {
+    const currentDate = selectedDate;
+    setTaskDate(format(currentDate, "dd-MM-yyyy"));
+    setValue("date", currentDate.toISOString());
+    togglePicker();
+  };
+
+  const togglePicker = () => {
+    setShowDatePicker(!showDatePicker);
+  };
+
+  const [modalVisible, setModalVisible] = useState(false);
+  const reset = () => {
+    setValue("titre", "");
+    setValue("description", "");
+    setValue("categorie", "");
+    setValue("date", "");
+    setValue("priorite", "");
+    setValue("heureDebut", "");
+    setValue("heureFin", "");
+    setTaskDate("");
+    setSelectedPriority("");
+    setStartDateTime("");
+    setEndDateTime("");
+  };
+
+  const toggleModal = () => {
+    console.log("toggleModal");
+    !modalVisible ? reset() : null;
+    setModalVisible(!modalVisible);
+  };
+
+  const pickerItems = [
+    { label: "haute", value: "haute", color: "#ff009d" },
+    { label: "basse", value: "basse", color: "#3af183" },
+    { label: "moyenne", value: "moyenne", color: "#267fff" },
+  ];
+
+  const formatTime = (date) => {
+    const hours = date.getHours().toString().padStart(2, "0");
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+    return `${hours}:${minutes}`;
+  };
+
+  const onSubmit = async (data) => {
+    try {
+      console.log("yed");
+      dispatch(addTodo({ ...data, done: 0 }));
+      console.log("yaddds");
+      await insertTask(db, { ...data, done: 0 });
+      console.log("yoood");
+      reset();
+      toggleModal();
+      navigation.navigate("Tâches");
+      console.log(data);
+    } catch (error) {
+      console.error("Erreur lors de la soumission du formulaire :", error);
+      // Gérer l'erreur de manière appropriée
+    }
+  };
+
+  handleCancel = () => {
+    reset();
+    toggleModal();
+  };
   return (
     <>
-       <Modal
+      <Modal
         animationType="slide"
         transparent={true}
         visible={modalVisible}
@@ -352,14 +385,14 @@ const TabRoute = () => {
           options={{
             tabBarIcon: ({ focused }) => (
               <Ionicons
-                name="ios-search"
+                name="ios-notifications"
                 size={24}
                 color={focused ? "#277dfa" : "#b2bccd"}
               />
             ),
           }}
           name="Find"
-          component={FindScreen}
+          component={NotifScreen}
         />
         <Tab.Screen
           name="Add"
@@ -393,99 +426,102 @@ const TabRoute = () => {
         <Tab.Screen
           options={{
             tabBarIcon: ({ focused }) => (
-              <Ionicons name="ios-bar-chart" size={24} color={focused ? "#277dfa" : "#b2bccd"}/>
+              <Ionicons
+                name="ios-bar-chart"
+                size={24}
+                color={focused ? "#277dfa" : "#b2bccd"}
+              />
             ),
           }}
           name="Statistiques"
-          component={NotificationScreen}
+          component={StatScreen}
         />
       </Tab.Navigator>
     </>
-  )
-}
+  );
+};
 
-export default TabRoute
+export default TabRoute;
 const styles = StyleSheet.create({
-    shadow: {
-      shadowColor: "#277dfa",
-      shadowOffset: {
-        width: 0,
-        height: 10,
-      },
-      shadowOpacity: 0.25,
-      shadowRadius: 3.5,
-      elevation: 55,
+  shadow: {
+    shadowColor: "#277dfa",
+    shadowOffset: {
+      width: 0,
+      height: 10,
     },
-    centeredView: {
-      flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
-      marginTop: 22,
+    shadowOpacity: 0.25,
+    shadowRadius: 3.5,
+    elevation: 55,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22,
+  },
+  topModal: {
+    // flex: 1,
+    justifyContent: "space-between",
+    alignItems: "center",
+    flexDirection: "row",
+    //  height:,
+    width: "100%",
+    marginBottom: 20,
+  },
+  modalView: {
+    // paddingTop:2,
+    width: "80%",
+    height: 560,
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 20,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
     },
-    topModal: {
-      // flex: 1,
-      justifyContent: "space-between",
-      alignItems: "center",
-      flexDirection: "row",
-      //  height:,
-      width: "100%",
-      marginBottom: 20,
-    },
-    modalView: {
-      // paddingTop:2,
-      width: "80%",
-      height: 560,
-      margin: 20,
-      backgroundColor: "white",
-      borderRadius: 20,
-      padding: 20,
-      alignItems: "center",
-      shadowColor: "#000",
-      shadowOffset: {
-        width: 0,
-        height: 2,
-      },
-      shadowOpacity: 0.25,
-      shadowRadius: 4,
-      elevation: 5,
-    },
-    button: {
-      borderRadius: 20,
-      padding: 10,
-      elevation: 2,
-    },
-    buttonOpen: {
-      backgroundColor: "#F194FF",
-    },
-    buttonClose: {
-      backgroundColor: "#2196F3",
-    },
-    textStyle: {
-      color: "white",
-      fontWeight: "bold",
-      textAlign: "center",
-    },
-    modalText: {
-      marginBottom: 15,
-      textAlign: "center",
-    },
-    input: {
-      backgroundColor: "#f3f6fd",
-      borderRadius: 5,
-      width: "100%",
-      height: 50,
-      paddingVertical: 5,
-      paddingHorizontal: 15,
-      marginBottom: 10,
-    },
-    inputRow: {
-      backgroundColor: "#f3f6fd",
-      borderRadius: 5,
-      height: 50,
-      paddingVertical: 5,
-      marginBottom: 10,
-      borderColor: "#d6deeb",
-      borderWidth: 1,
-    },
-  });
-  
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  buttonOpen: {
+    backgroundColor: "#F194FF",
+  },
+  buttonClose: {
+    backgroundColor: "#2196F3",
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center",
+  },
+  input: {
+    backgroundColor: "#f3f6fd",
+    borderRadius: 5,
+    width: "100%",
+    height: 50,
+    paddingVertical: 5,
+    paddingHorizontal: 15,
+    marginBottom: 10,
+  },
+  inputRow: {
+    backgroundColor: "#f3f6fd",
+    borderRadius: 5,
+    height: 50,
+    paddingVertical: 5,
+    marginBottom: 10,
+    borderColor: "#d6deeb",
+    borderWidth: 1,
+  },
+});

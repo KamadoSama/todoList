@@ -5,9 +5,9 @@ import { ProgressCircle } from "react-native-svg-charts";
 import { useSelector } from "react-redux";
 import { format, subDays } from "date-fns";
 
-export default function NotificationScreen({ navigation }) {
+export default function StatScreen({ navigation }) {
   const todos = useSelector((state) => state.todos.tasks);
-  console.log("todos_____________",todos);
+  console.log("todos_____________", todos);
 
   const getTasksDoneThisWeek = () => {
     const today = new Date();
@@ -17,7 +17,7 @@ export default function NotificationScreen({ navigation }) {
   const getTasksForThisWeek = () => {
     const currentDate = new Date();
 
-    const tasksThisWeek = todos.filter(task => {
+    const tasksThisWeek = todos.filter((task) => {
       const taskDate = new Date(task.date);
       const isSameWeek =
         currentDate.getFullYear() === taskDate.getFullYear() &&
@@ -34,11 +34,12 @@ export default function NotificationScreen({ navigation }) {
 
   const tasksThisWeek = getTasksForThisWeek();
   const totalTasks = tasksThisWeek.length;
-  const completedTasks = tasksThisWeek.filter(task => task.done === 1).length;
+  const completedTasks = tasksThisWeek.filter((task) => task.done === 1).length;
   console.log("totalTasks", totalTasks);
   console.log("completedTasks", completedTasks);
   // Calculer le pourcentage
-  const percentageCompleted = totalTasks === 0 ? 0 : (1-(totalTasks - completedTasks )/ totalTasks) ;
+  const percentageCompleted =
+    totalTasks === 0 ? 0 : 1 - (totalTasks - completedTasks) / totalTasks;
   console.log("percentageCompleted", percentageCompleted);
   return (
     <View style={styles.container}>
@@ -69,56 +70,130 @@ export default function NotificationScreen({ navigation }) {
             </Text>
           </View>
         </View>
-        <ScrollView style={{ width: "90%", marginTop: 70 }}>
-          <View style={{ width: "100%", display:'flex',  marginTop: 50,flexDirection:'row',justifyContent:'space-between' }}>
-            <View style={{...styles.chartContent, position:'relative'}}>
-              <Text style={{fontWeight:500, fontSize:15, color:'#132033', textAlign:'center'}} >Stats hebdomadaires</Text>
+        <ScrollView style={{ width: "90%", marginTop: 100 }}>
+          <View
+            style={{
+              width: "100%",
+              display: "flex",
+              marginTop: 50,
+              flexDirection: "row",
+              justifyContent: "space-between",
+            }}
+          >
+            <View style={{ ...styles.chartContent, position: "relative" }}>
+              <Text
+                style={{
+                  fontWeight: 500,
+                  fontSize: 15,
+                  color: "#132033",
+                  textAlign: "center",
+                }}
+              >
+                Stats hebdomadaires
+              </Text>
               <ProgressCircle
-                style={{ height: 150,  marginTop: 15, backgroundColor:"#fff" }}
+                style={{ height: 150, marginTop: 15, backgroundColor: "#fff" }}
                 progress={percentageCompleted}
                 progressColor={"#277dfa"}
                 strokeWidth={4}
               />
-              <View style={{position:'absolute',top:'40%', left:'38%' , display:'flex',alignItems:'center',justifyContent:'center' }}>
-                <Text style={{...styles.numberRateStyle, color:'#132033'}}>{totalTasks - completedTasks}</Text>
-                <Text style={{...styles.textRateStyle,color:'#132033'}}>Restantes</Text>
+              <View
+                style={{
+                  position: "absolute",
+                  top: "40%",
+                  left: "38%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Text style={{ ...styles.numberRateStyle, color: "#132033" }}>
+                  {totalTasks - completedTasks}
+                </Text>
+                <Text style={{ ...styles.textRateStyle, color: "#132033" }}>
+                  Restantes
+                </Text>
               </View>
             </View>
-            <View  style={styles.rateContent}>
-              <View style={{...styles.rateChild,borderTopRightRadius:20,borderTopLeftRadius:10}}>
-                <Text style={styles.numberRateStyle}>{totalTasks - completedTasks}</Text>
+            <View style={styles.rateContent}>
+              <View
+                style={{
+                  ...styles.rateChild,
+                  borderTopRightRadius: 20,
+                  borderTopLeftRadius: 10,
+                }}
+              >
+                <Text style={styles.numberRateStyle}>
+                  {totalTasks - completedTasks}
+                </Text>
                 <Text style={styles.textRateStyle}>Restantes</Text>
               </View>
-              <View style={styles.rateChild} >
+              <View style={styles.rateChild}>
                 <Text style={styles.numberRateStyle}>2</Text>
                 <Text style={styles.textRateStyle}>En retard</Text>
               </View>
-              <View style={{...styles.rateChild,borderBottomRightRadius:20, borderBottomLeftRadius:10}}>
+              <View
+                style={{
+                  ...styles.rateChild,
+                  borderBottomRightRadius: 20,
+                  borderBottomLeftRadius: 10,
+                }}
+              >
                 <Text style={styles.numberRateStyle}>{completedTasks}</Text>
                 <Text style={styles.textRateStyle}>Terminées</Text>
               </View>
             </View>
           </View>
-          <View style={{ width: "100%", display:'flex',  marginTop: 40, marginBottom:40 ,flexDirection:'row',justifyContent:'space-between' }}>
+          <View
+            style={{
+              width: "100%",
+              display: "flex",
+              marginTop: 40,
+              marginBottom: 40,
+              flexDirection: "row",
+              justifyContent: "space-between",
+            }}
+          >
             <View style={styles.chartContent}>
-              <Text style={{fontWeight:500, fontSize:15, color:'#132033', textAlign:'center'}} >Stats mensuelles</Text>
+              <Text
+                style={{
+                  fontWeight: 500,
+                  fontSize: 15,
+                  color: "#132033",
+                  textAlign: "center",
+                }}
+              >
+                Stats mensuelles
+              </Text>
               <ProgressCircle
-                style={{ height: 150,  marginTop: 15 }}
+                style={{ height: 150, marginTop: 15 }}
                 progress={0.7}
                 progressColor={"#277dfa"}
                 strokeWidth={4}
               />
             </View>
-            <View  style={styles.rateContent}>
-              <View style={{...styles.rateChild,borderTopRightRadius:20,borderTopLeftRadius:10}}>
-              <Text style={styles.numberRateStyle}>4</Text>
+            <View style={styles.rateContent}>
+              <View
+                style={{
+                  ...styles.rateChild,
+                  borderTopRightRadius: 20,
+                  borderTopLeftRadius: 10,
+                }}
+              >
+                <Text style={styles.numberRateStyle}>4</Text>
                 <Text style={styles.textRateStyle}>Restantes</Text>
               </View>
-              <View style={styles.rateChild} >
-              <Text style={styles.numberRateStyle}>2</Text>
+              <View style={styles.rateChild}>
+                <Text style={styles.numberRateStyle}>2</Text>
                 <Text style={styles.textRateStyle}>En retard</Text>
               </View>
-              <View style={{...styles.rateChild,borderBottomRightRadius:20, borderBottomLeftRadius:10}}>
+              <View
+                style={{
+                  ...styles.rateChild,
+                  borderBottomRightRadius: 20,
+                  borderBottomLeftRadius: 10,
+                }}
+              >
                 <Text style={styles.numberRateStyle}>12</Text>
                 <Text style={styles.textRateStyle}>Terminées</Text>
               </View>
@@ -170,37 +245,37 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     width: "68%",
     height: 200,
-   
-    display:'flex',
-    borderRadius:10
+
+    display: "flex",
+    borderRadius: 10,
   },
-  rateContent:{
-    width:"29%",
-    height:200,
-    display:'flex',
-    backgroundColor:"#fff",
-    borderRadius:10,
-    borderTopRightRadius:20,
-    borderTopLeftRadius:10,
-    borderBottomRightRadius:20,
-    justifyContent:"space-between",
-    flexDirection:"column"
+  rateContent: {
+    width: "29%",
+    height: 200,
+    display: "flex",
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    borderTopRightRadius: 20,
+    borderTopLeftRadius: 10,
+    borderBottomRightRadius: 20,
+    justifyContent: "space-between",
+    flexDirection: "column",
   },
-  rateChild:{
-    backgroundColor:"#277dfa",
-    height:"32%",
-    display:'flex',
-    alignItems:'center',
-    justifyContent:'center'
+  rateChild: {
+    backgroundColor: "#277dfa",
+    height: "32%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
   },
-  numberRateStyle:{
-    fontWeight:'bold',
-    color:"#fff",
-    fontSize:20
+  numberRateStyle: {
+    fontWeight: "bold",
+    color: "#fff",
+    fontSize: 20,
   },
-  textRateStyle:{
-    fontWeight:'300',
-    color:"#fff",
-    fontSize:13
-  }
+  textRateStyle: {
+    fontWeight: "300",
+    color: "#fff",
+    fontSize: 13,
+  },
 });
