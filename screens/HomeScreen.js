@@ -9,13 +9,21 @@ import {
 } from "react-native";
 import Accordion from "../components/Accordion";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { Button} from 'react-native-paper';
+import { Button } from "react-native-paper";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchTasks , setSearchInput } from "../redux/redux";
-import { format } from 'date-fns';
+import { fetchTasks, setSearchInput } from "../redux/redux";
+import { format } from "date-fns";
+import * as Notifications from "expo-notifications";
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
 
 export default function HomeScreen() {
-
   const [taskItems, setTaskItems] = useState([]);
   const [search, setSearch] = useState("");
   const [finished, setFinished] = useState(false);
@@ -26,31 +34,73 @@ export default function HomeScreen() {
   const searchInput = useSelector((state) => state.todos.searchInput);
   console.log(todos);
 
+  useEffect(() => {
+    checkNotificationsPermission();
+  }, []);
 
+  useEffect(() => {
+    scheduleNotificationsForLateTasks();
+  }, [todos]);
+
+  const checkNotificationsPermission = async () => {
+    const { status: existingStatus } =
+      await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+    if (existingStatus !== "granted") {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+    if (finalStatus !== "granted") {
+      alert("Failed to get push token for push notification!");
+      return;
+    }
+  };
+
+  const scheduleNotificationsForLateTasks = async () => {
+    const lateTasks = filteredTasks.filter(
+      (task) => !task.done && new Date(task.date) < new Date()
+    );
+
+    console.log("late", lateTasks);
+    for (const task of lateTasks) {
+      console.log("task", task);
+      const trigger = new Date(Date.now() + 60 * 60 * 1000);
+      trigger.setMinutes(0);
+      trigger.setSeconds(0);
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title: "Tâche en retard",
+          body: `La tâche "${task.titre}" est en retard.`,
+        },
+        trigger
+      });
+    }
+  };
   useEffect(() => {
     dispatch(fetchTasks());
   }, [dispatch]);
-  
+
   const handleSearchChange = (text) => {
     dispatch(setSearchInput(text));
   };
 
-
   const filteredTasks = useMemo(() => {
     let filtered = todos;
-    filtered = filtered.filter(todo => todo.titre.toLowerCase().includes(searchInput.toLowerCase()));
+    filtered = filtered.filter((todo) =>
+      todo.titre.toLowerCase().includes(searchInput.toLowerCase())
+    );
     if (finished) {
-      filtered = filtered.filter(todo => todo.done === 1);
+      filtered = filtered.filter((todo) => todo.done === 1);
     } else {
-      filtered = filtered.filter(todo => todo.done === 0);
+      filtered = filtered.filter((todo) => todo.done === 0);
     }
     return filtered;
   }, [todos, searchInput, finished]);
 
-  const groupTasksByDate = tasks => {
+  const groupTasksByDate = (tasks) => {
     const groupedTasks = {};
-    tasks.forEach(task => {
-      const taskDate =  format(task.date,"dd-MM-yyyy") ;
+    tasks.forEach((task) => {
+      const taskDate = format(task.date, "dd-MM-yyyy");
       if (!groupedTasks[taskDate]) {
         groupedTasks[taskDate] = [];
       }
@@ -59,46 +109,44 @@ export default function HomeScreen() {
     return groupedTasks;
   };
 
-  const renderTasksByDate = groupedTasks => {
-    const today = format(new Date(), 'dd-MM-yyyy');
+  const renderTasksByDate = (groupedTasks) => {
+    const today = format(new Date(), "dd-MM-yyyy");
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
-    const tomorrowFormatted = format(tomorrow, 'dd-MM-yyyy');
+    const tomorrowFormatted = format(tomorrow, "dd-MM-yyyy");
 
-    
-  const renderedTasks = [];
-  Object.keys(groupedTasks)
-  .filter(date => date !== today && date !== tomorrowFormatted)
-  .forEach(date => {
-    renderedTasks.push(
-      <View key={date}>
-        <Text style={styles.sectionTitle}>{date}</Text>
-        {renderTasks(groupedTasks[date])}
-      </View>
-    );
-  });
-  if (groupedTasks[today]) {
-    renderedTasks.push(
-      <View key={today}>
-        <Text style={styles.sectionTitle}>Aujourd'hui</Text>
-        {renderTasks(groupedTasks[today])}
-      </View>
-    );
-  }
+    const renderedTasks = [];
+    Object.keys(groupedTasks)
+      .filter((date) => date !== today && date !== tomorrowFormatted)
+      .forEach((date) => {
+        renderedTasks.push(
+          <View key={date}>
+            <Text style={styles.sectionTitle}>{date}</Text>
+            {renderTasks(groupedTasks[date])}
+          </View>
+        );
+      });
+    if (groupedTasks[today]) {
+      renderedTasks.push(
+        <View key={today}>
+          <Text style={styles.sectionTitle}>Aujourd'hui</Text>
+          {renderTasks(groupedTasks[today])}
+        </View>
+      );
+    }
 
-  if (groupedTasks[tomorrowFormatted]) {
-    renderedTasks.push(
-      <View key={tomorrowFormatted}>
-        <Text style={styles.sectionTitle}>Demain</Text>
-        {renderTasks(groupedTasks[tomorrowFormatted])}
-      </View>
-    );
-  }
+    if (groupedTasks[tomorrowFormatted]) {
+      renderedTasks.push(
+        <View key={tomorrowFormatted}>
+          <Text style={styles.sectionTitle}>Demain</Text>
+          {renderTasks(groupedTasks[tomorrowFormatted])}
+        </View>
+      );
+    }
 
-
-  return renderedTasks;
+    return renderedTasks;
   };
-  const renderTasks = tasks => {
+  const renderTasks = (tasks) => {
     return tasks.map((item) => (
       <Accordion
         key={item.id}
@@ -119,21 +167,41 @@ export default function HomeScreen() {
     setFinished(status);
     console.log(status);
   };
-  const renderedTasksByDate = useMemo(() => renderTasksByDate(groupTasksByDate(filteredTasks)), [filteredTasks]);
+  const renderedTasksByDate = useMemo(
+    () => renderTasksByDate(groupTasksByDate(filteredTasks)),
+    [filteredTasks]
+  );
   return (
     <View style={styles.container}>
       <View style={styles.topContainer}>
-       <View style={{flexDirection:'row'}}>
+        <View style={{ flexDirection: "row" }}>
           <View style={styles.searchContainer}>
-            <TextInput style={styles.inputSearch} placeholder={'Rechercher...'} value={searchInput} onChangeText={handleSearchChange}/>
-            <Ionicons name="ios-search" size={24} color="#277dfa" style={{position:'absolute', right:5}}    />
+            <TextInput
+              style={styles.inputSearch}
+              placeholder={"Rechercher..."}
+              value={searchInput}
+              onChangeText={handleSearchChange}
+            />
+            <Ionicons
+              name="ios-search"
+              size={24}
+              color="#277dfa"
+              style={{ position: "absolute", right: 5 }}
+            />
           </View>
-          <Button title="Search"  style={styles.searchButton} >
-          <Ionicons name="add" size={24} color="#fff" />
+          <Button title="Search" style={styles.searchButton}>
+            <Ionicons name="add" size={24} color="#fff" />
           </Button>
-       </View>
+        </View>
 
-       <View style={{flexDirection:'row',width:"50%" ,justifyContent:"space-evenly", marginTop:25}}>
+        <View
+          style={{
+            flexDirection: "row",
+            width: "50%",
+            justifyContent: "space-evenly",
+            marginTop: 25,
+          }}
+        >
           {/* <Button mode="text" title="active" textColor="#277fda" style={styles.statusButton}  >
             En cours
           </Button>
@@ -141,23 +209,29 @@ export default function HomeScreen() {
             Terminé
           </Button> */}
 
-          <TouchableOpacity onPress={()=>handleFinish(false)}>
+          <TouchableOpacity onPress={() => handleFinish(false)}>
             <View style={styles.statusButton}>
-              <Text style={[styles.addText, finished === false && styles.active]}>En cours</Text>
+              <Text
+                style={[styles.addText, finished === false && styles.active]}
+              >
+                En cours
+              </Text>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity onPress={()=>handleFinish(true)}>
+          <TouchableOpacity onPress={() => handleFinish(true)}>
             <View style={styles.statusButton}>
-              <Text style={[styles.addText, finished === true && styles.active]}>Terminé</Text>
+              <Text
+                style={[styles.addText, finished === true && styles.active]}
+              >
+                Terminé
+              </Text>
             </View>
           </TouchableOpacity>
-       </View>
+        </View>
       </View>
       {/* Today's Tasks */}
       <View style={styles.taskWrapper}>
-      <ScrollView style={styles.items}>
-        {renderedTasksByDate}
-      </ScrollView>
+        <ScrollView style={styles.items}>{renderedTasksByDate}</ScrollView>
       </View>
     </View>
   );
@@ -168,7 +242,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#E8EAED",
   },
-  statusButton:{
+  statusButton: {
     color: "#277dfa",
     // borderRadius: 5,
     paddingTop: 10,
@@ -176,11 +250,10 @@ const styles = StyleSheet.create({
     fontSize: 30,
     justifyContent: "center",
     alignItems: "center",
-    
   },
   searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',  
+    flexDirection: "row",
+    alignItems: "center",
     borderRadius: 5,
     paddingLeft: 10,
     position: "relative",
@@ -192,7 +265,6 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 50,
     justifyContent: "center",
     alignItems: "center",
-    
   },
   inputSearch: {
     backgroundColor: "#f3f6fd",
@@ -226,7 +298,6 @@ const styles = StyleSheet.create({
   },
   items: {
     marginTop: 30,
-    
   },
   scrollContainer: {
     flex: 1,
@@ -237,7 +308,7 @@ const styles = StyleSheet.create({
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
-      height: 2, 
+      height: 2,
     },
     shadowOpacity: 0.25,
     shadowRadius: 4,
@@ -275,9 +346,9 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: "700",
   },
-  active:{
-    color:"#277dfa",
+  active: {
+    color: "#277dfa",
     borderBottomColor: "#277dfa",
-    borderBottomWidth: 2, 
-  }
+    borderBottomWidth: 2,
+  },
 });
