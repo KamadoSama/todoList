@@ -15,16 +15,23 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.kamadosama.todoList"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon2.png",
         "backgroundColor": "#7253FE, #6A3DE8"
-      }
+      },
+      "package": "com.kamadosama.todoList"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "41b5c8fd-bf49-4dc6-8d96-528f03191deb"
+      }
     }
   }
 }

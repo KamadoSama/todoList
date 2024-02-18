@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { Button, View, StyleSheet, Text, ScrollView } from "react-native";
 import { Image } from "expo-image";
-import { ProgressCircle } from "react-native-svg-charts";
+import { AnimatedCircularProgress } from "react-native-circular-progress";
 import { useSelector } from "react-redux";
 import { format, subDays } from "date-fns";
 
@@ -91,29 +91,40 @@ export default function StatScreen({ navigation }) {
               >
                 Stats hebdomadaires
               </Text>
-              <ProgressCircle
-                style={{ height: 150, marginTop: 15, backgroundColor: "#fff" }}
-                progress={percentageCompleted}
-                progressColor={"#277dfa"}
-                strokeWidth={4}
-              />
+
               <View
                 style={{
-                  position: "absolute",
-                  top: "40%",
-                  left: "38%",
+                  width: "100%",
+                  height: 150,
                   display: "flex",
+                  alignContent: "center",
                   alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <Text style={{ ...styles.numberRateStyle, color: "#132033" }}>
-                  {totalTasks - completedTasks}
-                </Text>
-                <Text style={{ ...styles.textRateStyle, color: "#132033" }}>
-                  Restantes
-                </Text>
+                }}>
+                <AnimatedCircularProgress
+                  size={150}
+                  width={4}
+                  fill={percentageCompleted * 100}
+                  tintColor="#277dfa"
+                  onAnimationComplete={() => {}}
+                  backgroundColor="#3d5875"
+                  style={{ transform: [{ rotate: "-90deg" }], marginTop: 15 }}>
+                  {() => (
+                    <View style={{transform:[{ rotate: "90deg" }],display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center"}}>
+                      <Text
+                        style={{ ...styles.numberRateStyle, color: "#132033" }}>
+                        {totalTasks - completedTasks}
+                      </Text>
+                      <Text
+                        style={{ ...styles.textRateStyle, color: "#132033" }}>
+                        Restantes
+                      </Text>
+                    </View>
+                  )}
+                </AnimatedCircularProgress>
               </View>
+
             </View>
             <View style={styles.rateContent}>
               <View
@@ -165,12 +176,38 @@ export default function StatScreen({ navigation }) {
               >
                 Stats mensuelles
               </Text>
-              <ProgressCircle
-                style={{ height: 150, marginTop: 15 }}
-                progress={0.7}
-                progressColor={"#277dfa"}
-                strokeWidth={4}
-              />
+              <View
+                style={{
+                  width: "100%",
+                  height: 150,
+                  display: "flex",
+                  alignContent: "center",
+                  alignItems: "center",
+                }}>
+                <AnimatedCircularProgress
+                  size={150}
+                  width={4}
+                  fill={percentageCompleted * 100}
+                  tintColor="#277dfa"
+                  onAnimationComplete={() => {}}
+                  backgroundColor="#3d5875"
+                  style={{ transform: [{ rotate: "-90deg" }], marginTop: 15 }}>
+                  {() => (
+                    <View style={{transform:[{ rotate: "90deg" }],display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center"}}>
+                      <Text
+                        style={{ ...styles.numberRateStyle, color: "#132033" }}>
+                        {totalTasks - completedTasks}
+                      </Text>
+                      <Text
+                        style={{ ...styles.textRateStyle, color: "#132033" }}>
+                        Restantes
+                      </Text>
+                    </View>
+                  )}
+                </AnimatedCircularProgress>
+              </View>
             </View>
             <View style={styles.rateContent}>
               <View
