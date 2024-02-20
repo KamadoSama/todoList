@@ -1,9 +1,9 @@
-import React, { useMemo } from "react";
-import { Button, View, StyleSheet, Text, ScrollView } from "react-native";
-import { Image } from "expo-image";
+import React  from "react";
+import {  View, StyleSheet, Text, ScrollView, Image } from "react-native";
+// import { Image } from "expo-image";
 import { AnimatedCircularProgress } from "react-native-circular-progress";
 import { useSelector } from "react-redux";
-import { format, subDays } from "date-fns";
+import { subDays } from "date-fns";
 
 export default function StatScreen({ navigation }) {
   const todos = useSelector((state) => state.todos.tasks);
@@ -57,7 +57,7 @@ export default function StatScreen({ navigation }) {
             <Image
               style={{ ...styles.image, height: "100%" }}
               source={require("../assets/task.png")}
-              contentFit="cover"
+              // contentFit="cover"
             />
           </View>
           <View style={{ width: "60%", height: "100%" }}>
