@@ -1,15 +1,14 @@
 {
   "expo": {
     "name": "todoList",
-    "slug": "todoList",
+    "slug": "todolist",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon2.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#7253FE, #6A3DE8"
+      "resizeMode": "contain"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -20,8 +19,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/icon2.png",
-        "backgroundColor": "#7253FE, #6A3DE8"
+        "foregroundImage": "./assets/icon2.png"
       },
       "package": "com.kamadosama.todoList"
     },
@@ -30,8 +28,9 @@
     },
     "extra": {
       "eas": {
-        "projectId": "41b5c8fd-bf49-4dc6-8d96-528f03191deb"
+        "projectId": "19b131e8-3e56-49f0-9ee7-6eb54be5bc88"
       }
-    }
+    },
+    "owner": "kamadosama12"
   }
 }
