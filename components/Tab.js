@@ -118,7 +118,7 @@ const TabRoute = () => {
   };
 
   const toggleModal = () => {
-    console.log("toggleModal");
+    
     !modalVisible ? reset() : null;
     setModalVisible(!modalVisible);
   };
@@ -137,15 +137,15 @@ const TabRoute = () => {
 
   const onSubmit = async (data) => {
     try {
-      console.log("yed");
+    
       dispatch(addTodo({ ...data, done: 0 }));
-      console.log("yaddds");
+    
       await insertTask(db, { ...data, done: 0 });
-      console.log("yoood");
+      
       reset();
       toggleModal();
       navigation.navigate("Tâches");
-      console.log(data);
+     
     } catch (error) {
       console.error("Erreur lors de la soumission du formulaire :", error);
       // Gérer l'erreur de manière appropriée

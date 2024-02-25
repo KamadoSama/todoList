@@ -7,7 +7,7 @@ import { subDays } from "date-fns";
 
 export default function StatScreen({ navigation }) {
   const todos = useSelector((state) => state.todos.tasks);
-  console.log("todos_____________", todos);
+  
 
   const getTasksDoneThisWeek = () => {
     const today = new Date();
@@ -30,23 +30,22 @@ export default function StatScreen({ navigation }) {
     return tasksThisWeek;
   };
 
-  console.log("getTasksForThisWeek", getTasksDoneThisWeek());
+ 
 
   const tasksThisWeek = getTasksForThisWeek();
   const totalTasks = tasksThisWeek.length;
   const completedTasks = tasksThisWeek.filter((task) => task.done === 1).length;
-  console.log("totalTasks", totalTasks);
-  console.log("completedTasks", completedTasks);
+
   // Calculer le pourcentage
   const percentageCompleted =
     totalTasks === 0 ? 0 : 1 - (totalTasks - completedTasks) / totalTasks;
-  console.log("percentageCompleted", percentageCompleted);
+
   return (
     <View style={styles.container}>
       <View style={styles.viewTop}>
         <Image
           style={styles.image}
-          source={require("../assets/idea.svg")}
+          source={require("../assets/idea.png")}
           contentFit="cover"
         />
       </View>

@@ -85,5 +85,54 @@ const updateTask = (db, id) => {
     });
   });
 };
+// créer un utilisateur avec son username 
+const createUser = (db, { username }) => {
+  return new Promise((resolve, reject) => {
+    db.transaction(
+      (tx) => {
+        tx.executeSql(
+          'INSERT INTO users (username) VALUES (?)',
+          [username],
+          (_, results) => {
+            console.log('Utilisateur inséré avec succès!');
+            resolve(results);
+          },
+          (_, error) => {
+            console.error("Erreur lors de l'insertion de l'utilisateur :", error);
+            reject(error);
+          }
+        );
+      },
+      (error) => {
+        console.error("Erreur lors de la transaction :", error);
+        reject(error);
+      },
+      () => {
+        // La transaction est terminée
+      }
+    );
+  });
+}
+
+// récupérer un utilisateur avec son username
+const retrieveUser = (db) => {
+  return new Promise((resolve, reject) => {
+    db.transaction((tx) => {
+      tx.executeSql(
+        'SELECT * FROM users',
+        [],
+        (_, results) => {
+          const users = results.rows._array;
+          console.log('Utilisateur récupéré avec succès!', users);
+          resolve(users);
+        },
+        (_, error) => {
+          console.error('Erreur lors de la récupération de l\'utilisateur :', error);
+          reject(error);
+        }
+      );
+    });
+  });
+};
 
 export { insertTask,updateTask ,retrieveTasks,deleteTask};

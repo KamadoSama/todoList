@@ -21,7 +21,7 @@ const Accordion = ({
   const dispatch = useDispatch();
   const handleDelete = (id) => {
     dispatch(removeTask(id));
-    console.log("id", id);
+  
   };
 
   const handleDone = (id) => {
@@ -37,7 +37,7 @@ const Accordion = ({
   let color = "#277dfa";
   if(priorite === 'haute'){
     color = '#ff009d'
-    console.log('priorite',priorite )
+
   }
   if(priorite === 'moyenne'){
     color = '#3af183'

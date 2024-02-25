@@ -81,7 +81,7 @@ const CalendarScreen = () => {
 
   const loadItems = (day) => {
     const formattedDay = format(day.timestamp, "yyyy-MM-dd");
-    console.log(day);
+  
     if (!todosItems[formattedDay]) {
       todosItems[formattedDay] = [];
     }

@@ -32,7 +32,7 @@ export default function HomeScreen() {
   const todos = useSelector((state) => state.todos.tasks);
   // const filter = useSelector((state) => state.todos.tasks);
   const searchInput = useSelector((state) => state.todos.searchInput);
-  console.log(todos);
+
 
   useEffect(() => {
     checkNotificationsPermission();
@@ -61,9 +61,9 @@ export default function HomeScreen() {
       (task) => !task.done && new Date(task.date) < new Date()
     );
 
-    console.log("late", lateTasks);
+  
     for (const task of lateTasks) {
-      console.log("task", task);
+      
       const trigger = new Date(Date.now() + 60 * 60 * 1000);
       trigger.setMinutes(0);
       trigger.setSeconds(0);
@@ -165,7 +165,7 @@ export default function HomeScreen() {
   };
   const handleFinish = (status) => {
     setFinished(status);
-    console.log(status);
+  
   };
   const renderedTasksByDate = useMemo(
     () => renderTasksByDate(groupTasksByDate(filteredTasks)),
