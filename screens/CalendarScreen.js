@@ -116,13 +116,14 @@ const CalendarScreen = () => {
               style={{
                 flexDirection: "row",
                 justifyContent: "space-between",
+                marginTop: 10,
               }}
             >
               <View>
                 <Text>{item.name}</Text>
                 <Text style={styles.description}>{item.description}</Text>
               </View>
-              <Avatar.Text label="J" />
+              <Avatar.Text label="J"  />
             </View>
           </Card.Content>
         </Card>

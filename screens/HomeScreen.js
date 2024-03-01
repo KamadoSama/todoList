@@ -151,7 +151,7 @@ export default function HomeScreen() {
       <Accordion
         key={item.id}
         title={item.titre}
-        categorie={item.categorie}
+        // categorie={item.categorie}
         description={item.description}
         footer={"This is a footer"}
         heureDebut={item.heureDebut}

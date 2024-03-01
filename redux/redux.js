@@ -4,7 +4,7 @@ import {
   createAsyncThunk,
 } from "@reduxjs/toolkit";
 
-import { retrieveTasks, insertTask, deleteTask, updateTask } from "../db/crudTodo";
+import { retrieveTasks, insertTask, deleteTask, updateTask, retrieveUser } from "../db/crudTodo";
 import { db } from "../db/db";
 
 // Async thunk for fetching data
@@ -49,13 +49,24 @@ export const doneTask = createAsyncThunk("todos/updateTask", async (id) => {
 });
 
 
+const fectUser = createAsyncThunk("user/fetchUser", async () => {
+  try {
+    const user = await retrieveUser(db);
+    return user;
+  } catch (error) {
+    console.error("Erreur lors de la récupération de l'utilisateur :", error);
+    throw error;
+  }
+})
+
+
 // Todo slice
 const todoSlice = createSlice({
   name: "todos",
   initialState: { tasks: [], filter: "all", searchInput: "" }, // Initial state should be a plain object
   reducers: {
     addTodo: (state, action) => {
-      //{type: "todos/addTodo", payload: {id: 1, titre: "My todo",date: "2021-05-05",description: "My description",heureDebut: "12:00",heureFin: "13:00",categorie: "Travail",priorite: "Haute",done:0}}
+      //{type: "todos/addTodo", payload: {id: 1, titre: "My todo",date: "2021-05-05",description: "My description",heureDebut: "12:00",heureFin: "13:00",priorite: "Haute",done:0}}
 
       state.tasks.push(action.payload);
     },
@@ -93,11 +104,34 @@ const todoSlice = createSlice({
   },
 });
 
+
+// les informations de l'utilisateur
+
+const userSlice =  createSlice({
+  name: "user",
+  initialState: { user: null },
+  reducers: {
+    setUser: (state, action) => {
+      state.user = action.payload;
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fectUser.fulfilled, (state, action) => {
+        state.user = action.payload;
+      })
+  }
+});
+
+
 export const { addTodo, toggleTodo, setFilter, setSearchInput } =
   todoSlice.actions;
+
+export const { setUser } = userSlice.actions;
 
 export const store = configureStore({
   reducer: {
     todos: todoSlice.reducer,
+    user: userSlice.reducer,
   },
 });

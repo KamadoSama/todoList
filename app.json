@@ -10,26 +10,27 @@
       "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#5c59f5"
-
     },
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
       "supportsTablet": true
-    
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon2.png",
         "backgroundColor": "#5c59f5"
-
-      }
-     
+      },
+      "package": "com.kamadosama12.todolist"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "19b131e8-3e56-49f0-9ee7-6eb54be5bc88"
+      }
     }
-   
   }
 }

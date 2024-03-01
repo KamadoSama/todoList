@@ -106,7 +106,6 @@ const TabRoute = () => {
   const reset = () => {
     setValue("titre", "");
     setValue("description", "");
-    setValue("categorie", "");
     setValue("date", "");
     setValue("priorite", "");
     setValue("heureDebut", "");
@@ -166,7 +165,7 @@ const TabRoute = () => {
           Alert.alert("Modal has been closed.");
           setModalVisible(!modalVisible);
         }}
-      >
+        >
         {showDatePicker && (
           <DateTimePicker
             value={selectedDate}
@@ -234,18 +233,7 @@ const TabRoute = () => {
                 name="description"
                 defaultValue=""
               />
-              <Controller
-                control={control}
-                render={({ field }) => (
-                  <TextInputLabel
-                    label={"Catégorie"}
-                    value={field.value}
-                    onChangeText={(text) => setValue("categorie", text)}
-                  />
-                )}
-                name="categorie"
-                defaultValue=""
-              />
+             
             </View>
 
             <View
@@ -391,7 +379,7 @@ const TabRoute = () => {
               />
             ),
           }}
-          name="Find"
+          name="Notifications"
           component={NotifScreen}
         />
         <Tab.Screen
@@ -471,7 +459,7 @@ const styles = StyleSheet.create({
   modalView: {
     // paddingTop:2,
     width: "80%",
-    height: 560,
+    height: 500,
     margin: 20,
     backgroundColor: "white",
     borderRadius: 20,

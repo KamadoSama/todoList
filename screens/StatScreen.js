@@ -1,19 +1,66 @@
-import React  from "react";
-import {  View, StyleSheet, Text, ScrollView, Image } from "react-native";
+import React, { useEffect, useState }  from "react";
+import {  View, StyleSheet, Text, ScrollView, Image,TextInput, TouchableOpacity } from "react-native";
 // import { Image } from "expo-image";
 import { AnimatedCircularProgress } from "react-native-circular-progress";
-import { useSelector } from "react-redux";
+
+import {useSelector, useDispatch } from "react-redux";
+import { setUser } from "../redux/redux";
 import { subDays } from "date-fns";
+import { Modal, Portal, PaperProvider } from 'react-native-paper';
+
 
 export default function StatScreen({ navigation }) {
+  const dispatch = useDispatch();
+  //modal pour ajouter son username
+  const [modalVisible, setModalVisible] = useState(false);
+  const [username, setUsername] = useState("");
+
   const todos = useSelector((state) => state.todos.tasks);
+  const user = useSelector((state) => state.user.user);
+  useEffect(() => {
+    if (!user) {
+      setModalVisible(true);
+    }
+  } , [user]);
+
   
 
-  const getTasksDoneThisWeek = () => {
-    const today = new Date();
-    const startOfWeek = subDays(today, today.getDay());
-    return todos.filter((todo) => todo.done === 1);
-  };
+  const handleUsername = () => {
+    dispatch(setUser(username));
+    setModalVisible(false);
+  }
+  // prendre les taches d'auiourd'hui
+
+  const getTasksForToday = () => {  
+    const currentDate = new Date();
+    const tasksToday = todos.filter((task) => {
+      const taskDate = new Date(task.date);
+      const isSameDay =
+        currentDate.getFullYear() === taskDate.getFullYear() &&
+        currentDate.getMonth() === taskDate.getMonth() &&
+        currentDate.getDate() === taskDate.getDate() && 
+        task.done === 0;
+
+      return isSameDay;
+    });
+
+    return tasksToday;
+  }
+
+  const totalTasksToday = getTasksForToday().length;
+  // compter tasks par priorité
+
+  const getTasksByPriority = (priority) => {
+    const tasksToday = getTasksForToday();
+    return tasksToday.filter((task) => task.priorite === priority).length;
+  }
+
+  // const getTasksDoneThisWeek = () => {
+  //   const today = new Date();
+  //   const startOfWeek = subDays(today, today.getDay());
+  //   return todos.filter((todo) => todo.done === 1);
+  // };
+
   const getTasksForThisWeek = () => {
     const currentDate = new Date();
 
@@ -30,18 +77,76 @@ export default function StatScreen({ navigation }) {
     return tasksThisWeek;
   };
 
+  const getTasksForThisMonth = () => {
+    const currentDate = new Date();
+
+    const tasksThisMonth = todos.filter((task) => {
+      const taskDate = new Date(task.date);
+      const isSameMonth =
+        currentDate.getFullYear() === taskDate.getFullYear() &&
+        currentDate.getMonth() === taskDate.getMonth();
+
+      return isSameMonth;
+    }
+    );
+
+    return tasksThisMonth;
+
+  };
  
+  const tasksThisMonth = getTasksForThisMonth();
+  const totalTasksMonth = tasksThisMonth.length;
+  const completedTasksMonth = tasksThisMonth.filter((task) => task.done === 1).length;
+
+  // Calculer le pourcentage
+  const percentageCompletedMonth = totalTasksMonth === 0 ? 0 : 1 - (totalTasksMonth - completedTasksMonth) / totalTasksMonth;
 
   const tasksThisWeek = getTasksForThisWeek();
   const totalTasks = tasksThisWeek.length;
   const completedTasks = tasksThisWeek.filter((task) => task.done === 1).length;
 
   // Calculer le pourcentage
-  const percentageCompleted =
+  const percentageCompletedWeek =
     totalTasks === 0 ? 0 : 1 - (totalTasks - completedTasks) / totalTasks;
 
   return (
-    <View style={styles.container}>
+    <PaperProvider>
+
+      <Portal>
+        <Modal visible={modalVisible} style={{padding: 20}} onDismiss={() => setModalVisible(false)}>
+          <View style={styles.modalStyle}>
+            <Text style={{ fontWeight: "bold", fontSize: 20, marginBottom: 20 }}>
+              Ajouter votre nom d'utilisateur
+            </Text>
+            <TextInput
+              style={{ height: 40, borderColor: "gray", borderWidth: 1, marginBottom: 20}}
+              onChangeText={(text) => setUsername(text)}
+              value={username}
+            />
+            <TouchableOpacity 
+            style={{
+              backgroundColor:'#277dfa', 
+              padding:10,
+              borderRadius: 5,
+              alignItems: 'center',
+              justifyContent: 'center'
+              
+              }} onPress={handleUsername}>
+              <Text
+                style={{
+                  fontWeight: "bold",
+                  fontSize: 15,
+                  color: "#fff",
+                }}
+                >Ajouter</Text>
+            </TouchableOpacity>
+          </View>
+        </Modal>
+      </Portal>
+
+      <View style={styles.container}>
+      
+
       <View style={styles.viewTop}>
         <Image
           style={styles.image}
@@ -61,14 +166,15 @@ export default function StatScreen({ navigation }) {
           </View>
           <View style={{ width: "60%", height: "100%" }}>
             <Text style={{ fontWeight: "900", fontSize: 16, color: "#132033" }}>
-              Salut, Kamado
+              Salut, {user ? user : "Utilisateur"}
             </Text>
             <Text style={{ fontWeight: "100", fontSize: 14, color: "#b2bccd" }}>
-              Tu as 4 tâches à faire aujourd'hui, 1 de haute priorité, 2 de
-              moyenne priorité et 1 de basse priorité{" "}
+              Tu as {totalTasksToday} {totalTasksToday >1 ? "tâches" : "tâche"} à faire aujourd'hui, {getTasksByPriority('haute')} de haute priorité, {getTasksByPriority('moyenne')} de
+              moyenne priorité et {getTasksByPriority('basse')} de basse priorité{" "}
             </Text>
           </View>
         </View>
+
         <ScrollView style={{ width: "90%", marginTop: 100 }}>
           <View
             style={{
@@ -102,7 +208,7 @@ export default function StatScreen({ navigation }) {
                 <AnimatedCircularProgress
                   size={150}
                   width={4}
-                  fill={percentageCompleted * 100}
+                  fill={percentageCompletedWeek * 100}
                   tintColor="#277dfa"
                   onAnimationComplete={() => {}}
                   backgroundColor="#3d5875"
@@ -138,22 +244,23 @@ export default function StatScreen({ navigation }) {
                 </Text>
                 <Text style={styles.textRateStyle}>Restantes</Text>
               </View>
-              <View style={styles.rateChild}>
+              {/* <View style={styles.rateChild}>
                 <Text style={styles.numberRateStyle}>2</Text>
                 <Text style={styles.textRateStyle}>En retard</Text>
-              </View>
+              </View> */}
               <View
                 style={{
                   ...styles.rateChild,
                   borderBottomRightRadius: 20,
                   borderBottomLeftRadius: 10,
                 }}
-              >
+                >
                 <Text style={styles.numberRateStyle}>{completedTasks}</Text>
                 <Text style={styles.textRateStyle}>Terminées</Text>
               </View>
             </View>
           </View>
+
           <View
             style={{
               width: "100%",
@@ -186,7 +293,7 @@ export default function StatScreen({ navigation }) {
                 <AnimatedCircularProgress
                   size={150}
                   width={4}
-                  fill={percentageCompleted * 100}
+                  fill={completedTasksMonth * 100}
                   tintColor="#277dfa"
                   onAnimationComplete={() => {}}
                   backgroundColor="#3d5875"
@@ -197,7 +304,7 @@ export default function StatScreen({ navigation }) {
                     justifyContent: "center"}}>
                       <Text
                         style={{ ...styles.numberRateStyle, color: "#132033" }}>
-                        {totalTasks - completedTasks}
+                        {totalTasksMonth - completedTasksMonth}
                       </Text>
                       <Text
                         style={{ ...styles.textRateStyle, color: "#132033" }}>
@@ -216,21 +323,23 @@ export default function StatScreen({ navigation }) {
                   borderTopLeftRadius: 10,
                 }}
               >
-                <Text style={styles.numberRateStyle}>4</Text>
+                <Text style={styles.numberRateStyle}>{totalTasksMonth - completedTasksMonth}</Text>
                 <Text style={styles.textRateStyle}>Restantes</Text>
               </View>
-              <View style={styles.rateChild}>
+              {/* <View style={styles.rateChild}>
                 <Text style={styles.numberRateStyle}>2</Text>
                 <Text style={styles.textRateStyle}>En retard</Text>
-              </View>
+              </View> */}
               <View
                 style={{
                   ...styles.rateChild,
                   borderBottomRightRadius: 20,
                   borderBottomLeftRadius: 10,
                 }}
-              >
-                <Text style={styles.numberRateStyle}>12</Text>
+                >
+                <Text style={styles.numberRateStyle}>
+                  {completedTasksMonth}
+                </Text>
                 <Text style={styles.textRateStyle}>Terminées</Text>
               </View>
             </View>
@@ -238,6 +347,8 @@ export default function StatScreen({ navigation }) {
         </ScrollView>
       </View>
     </View>
+    </PaperProvider>
+    
   );
 }
 
@@ -299,7 +410,7 @@ const styles = StyleSheet.create({
   },
   rateChild: {
     backgroundColor: "#277dfa",
-    height: "32%",
+    height: "50%",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -314,4 +425,9 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 13,
   },
+  modalStyle:{
+    backgroundColor: "#fff", 
+    padding: 20,
+    borderRadius: 10
+  }
 });

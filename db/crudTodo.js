@@ -1,10 +1,10 @@
-const insertTask = (db, { titre, description, categorie, date, priorite, heureDebut, heureFin , done }) => {
+const insertTask = (db, { titre, description,  date, priorite, heureDebut, heureFin , done }) => {
   return new Promise((resolve, reject) => {
     db.transaction(
       (tx) => {
         tx.executeSql(
-          'INSERT INTO tasks (titre, description, categorie, date, priorite, heureDebut, heureFin, done) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-          [titre, description, categorie, date, priorite, heureDebut, heureFin, 0],
+          'INSERT INTO tasks (titre, description,  date, priorite, heureDebut, heureFin, done) VALUES (?, ?, ?, ?, ?, ?, ?)',
+          [titre, description,  date, priorite, heureDebut, heureFin, 0],
           (_, results) => {
             console.log('Tâche insérée avec succès!');
             resolve(results);
@@ -135,4 +135,4 @@ const retrieveUser = (db) => {
   });
 };
 
-export { insertTask,updateTask ,retrieveTasks,deleteTask};
+export { insertTask,updateTask ,retrieveTasks,deleteTask, retrieveUser, createUser};

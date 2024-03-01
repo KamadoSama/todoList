@@ -7,7 +7,6 @@ import { removeTask, doneTask } from "../redux/redux";
 import { format } from 'date-fns';
 const Accordion = ({
   title,
-  categorie,
   description,
   priorite,
   heureFin,
@@ -50,7 +49,7 @@ const Accordion = ({
       
       <List.Accordion
         title={title}
-        description={categorie}
+        // description={description}
         left={(props) => <List.Icon {...props} color={color} icon="circle" />}
         right={(props) => (
           <List.Icon
