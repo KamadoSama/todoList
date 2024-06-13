@@ -9,12 +9,12 @@ import {
 } from "react-native";
 import Accordion from "../components/Accordion";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { Button } from "react-native-paper";
+import { Badge, Button } from "react-native-paper";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchTasks, setSearchInput } from "../redux/redux";
 import { format } from "date-fns";
 import * as Notifications from "expo-notifications";
-
+import colors from "../constant/colors";
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
@@ -57,9 +57,15 @@ export default function HomeScreen() {
   };
 
   const scheduleNotificationsForLateTasks = async () => {
-    const lateTasks = filteredTasks.filter(
-      (task) => !task.done && new Date(task.date) < new Date()
-    );
+    const now = new Date(); // Date et heure actuelles
+
+    const lateTasks = filteredTasks.filter(task => {
+        const taskDueDateTime = new Date(task.date); // Convertir la date de la tâche en objet Date
+        const taskEndTime = new Date(task.heureFin); // Convertir l'heure de fin de la tâche en objet Date
+        
+        // Comparer la date et l'heure actuelles avec la date et l'heure de fin de la tâche
+        return (now > taskDueDateTime || (now.getDate() === taskDueDateTime.getDate() && now > taskEndTime)) && !task.done; // Tâche non effectuée et en retard
+    });
 
   
     for (const task of lateTasks) {
@@ -192,6 +198,10 @@ export default function HomeScreen() {
           <Button title="Search" style={styles.searchButton}>
             <Ionicons name="add" size={24} color="#fff" />
           </Button>
+        </View>
+
+        <View>
+          <Badge style={{ backgroundColor: "#277dfa", marginTop: 10 }} size={12} />
         </View>
 
         <View
