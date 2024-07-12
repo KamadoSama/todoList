@@ -1,7 +1,7 @@
-import FindScreen from "./FindScreen";
+import NotifScreen from "./NotifScreen";
 import AddScreen from "./AddScreen";
 import CalendarScreen from "./CalendarScreen";
-import NotificationScreen from "./NotificationScreen";
+import StatScreen from "./StatScreen";
 import HomeScreen from "./HomeScreen";
 
-export { HomeScreen, FindScreen, AddScreen, CalendarScreen, NotificationScreen};
+export { HomeScreen, NotifScreen, AddScreen, CalendarScreen, StatScreen };

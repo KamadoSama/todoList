@@ -56,8 +56,8 @@ LocaleConfig.defaultLocale = "fr";
 const CalendarScreen = () => {
   const todos = useSelector((state) => state.todos.tasks);
   const [todosItems, setTodoItems] = useState({});
-  const [modalVisible, setModalVisible] = useState(false);
-  const [selectedTask, setSelectedTask] = useState(null);
+  // const [modalVisible, setModalVisible] = useState(false);
+  // const [selectedTask, setSelectedTask] = useState(null);
   const date = new Date();
   const today = format(date, "yyyy-MM-dd");
 
@@ -81,20 +81,20 @@ const CalendarScreen = () => {
 
   const loadItems = (day) => {
     const formattedDay = format(day.timestamp, "yyyy-MM-dd");
-    console.log(day);
+  
     if (!todosItems[formattedDay]) {
       todosItems[formattedDay] = [];
     }
   };
-  const handleOpenModal = (task) => {
-    setSelectedTask(task);
-    setModalVisible(true);
-  };
+  // const handleOpenModal = (task) => {
+  //   setSelectedTask(task);
+  //   setModalVisible(true);
+  // };
 
-  const handleCloseModal = () => {
-    setSelectedTask(null);
-    setModalVisible(false);
-  };
+  // const handleCloseModal = () => {
+  //   setSelectedTask(null);
+  //   setModalVisible(false);
+  // };
 
   const renderEmptyDate = () => {
     return (
@@ -106,27 +106,28 @@ const CalendarScreen = () => {
 
   const renderItem = (item) => {
     return (
-      <TouchableOpacity
-        onPress={() => handleOpenModal(item)}
-        style={{ marginRight: 10, marginTop: 17 }}
-      >
+      // <TouchableOpacity
+      //   onPress={() => handleOpenModal(item)}
+      //   style={{ marginRight: 10, marginTop: 17 }}
+      // >
         <Card>
           <Card.Content>
             <View
               style={{
                 flexDirection: "row",
                 justifyContent: "space-between",
+                marginTop: 10,
               }}
             >
               <View>
                 <Text>{item.name}</Text>
                 <Text style={styles.description}>{item.description}</Text>
               </View>
-              <Avatar.Text label="J" />
+              <Avatar.Text label="J"  />
             </View>
           </Card.Content>
         </Card>
-      </TouchableOpacity>
+      // </TouchableOpacity>
     );
   };
 
@@ -139,11 +140,12 @@ const CalendarScreen = () => {
         renderItem={renderItem}
         renderEmptyDate={renderEmptyDate}
       />
-      <Modal
+      {/* <Modal
         animationType="slide"
         transparent={true}
         visible={modalVisible}
         onRequestClose={handleCloseModal}
+        style={{elevation:1}}
       >
         <View
           style={styles.centeredView}
@@ -159,7 +161,7 @@ const CalendarScreen = () => {
             </View>
           )}
         </View>
-      </Modal>
+      </Modal> */}
     </View>
   );
 };

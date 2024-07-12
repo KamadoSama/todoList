@@ -7,7 +7,6 @@ import { removeTask, doneTask } from "../redux/redux";
 import { format } from 'date-fns';
 const Accordion = ({
   title,
-  categorie,
   description,
   priorite,
   heureFin,
@@ -21,7 +20,7 @@ const Accordion = ({
   const dispatch = useDispatch();
   const handleDelete = (id) => {
     dispatch(removeTask(id));
-    console.log("id", id);
+  
   };
 
   const handleDone = (id) => {
@@ -37,7 +36,7 @@ const Accordion = ({
   let color = "#277dfa";
   if(priorite === 'haute'){
     color = '#ff009d'
-    console.log('priorite',priorite )
+
   }
   if(priorite === 'moyenne'){
     color = '#3af183'
@@ -50,7 +49,7 @@ const Accordion = ({
       
       <List.Accordion
         title={title}
-        description={categorie}
+        // description={description}
         left={(props) => <List.Icon {...props} color={color} icon="circle" />}
         right={(props) => (
           <List.Icon

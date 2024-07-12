@@ -1,10 +1,10 @@
-const insertTask = (db, { titre, description, categorie, date, priorite, heureDebut, heureFin , done }) => {
+const insertTask = (db, { titre, description,  date, priorite, heureDebut, heureFin , done }) => {
   return new Promise((resolve, reject) => {
     db.transaction(
       (tx) => {
         tx.executeSql(
-          'INSERT INTO tasks (titre, description, categorie, date, priorite, heureDebut, heureFin, done) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-          [titre, description, categorie, date, priorite, heureDebut, heureFin, 0],
+          'INSERT INTO tasks (titre, description,  date, priorite, heureDebut, heureFin, done) VALUES (?, ?, ?, ?, ?, ?, ?)',
+          [titre, description,  date, priorite, heureDebut, heureFin, 0],
           (_, results) => {
             console.log('Tâche insérée avec succès!');
             resolve(results);
@@ -85,5 +85,54 @@ const updateTask = (db, id) => {
     });
   });
 };
+// créer un utilisateur avec son username 
+const createUser = (db, { username }) => {
+  return new Promise((resolve, reject) => {
+    db.transaction(
+      (tx) => {
+        tx.executeSql(
+          'INSERT INTO users (username) VALUES (?)',
+          [username],
+          (_, results) => {
+            console.log('Utilisateur inséré avec succès!');
+            resolve(results);
+          },
+          (_, error) => {
+            console.error("Erreur lors de l'insertion de l'utilisateur :", error);
+            reject(error);
+          }
+        );
+      },
+      (error) => {
+        console.error("Erreur lors de la transaction :", error);
+        reject(error);
+      },
+      () => {
+        // La transaction est terminée
+      }
+    );
+  });
+}
 
-export { insertTask,updateTask ,retrieveTasks,deleteTask};
+// récupérer un utilisateur avec son username
+const retrieveUser = (db) => {
+  return new Promise((resolve, reject) => {
+    db.transaction((tx) => {
+      tx.executeSql(
+        'SELECT * FROM users',
+        [],
+        (_, results) => {
+          const users = results.rows._array;
+          console.log('Utilisateur récupéré avec succès!', users);
+          resolve(users);
+        },
+        (_, error) => {
+          console.error('Erreur lors de la récupération de l\'utilisateur :', error);
+          reject(error);
+        }
+      );
+    });
+  });
+};
+
+export { insertTask,updateTask ,retrieveTasks,deleteTask, retrieveUser, createUser};
